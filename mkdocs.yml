@@ -1,7 +1,8 @@
 site_name: HaskellDemo
 site_description: Haskell companion project for Scott.FunctionalProgrammingTriads
-site_url: https://example.invalid/HaskellDemo/
+site_url: https://scpeterson.github.io/HaskellDemo/
 repo_name: scpeterson/HaskellDemo
+repo_url: https://github.com/scpeterson/HaskellDemo
 nav:
   - Home: index.md
   - Getting Started: getting-started.md
