@@ -1,5 +1,8 @@
 # HaskellDemo
 
+[![Haskell CI](https://github.com/scpeterson/HaskellDemo/actions/workflows/ci.yml/badge.svg)](https://github.com/scpeterson/HaskellDemo/actions/workflows/ci.yml)
+[![Docs](https://github.com/scpeterson/HaskellDemo/actions/workflows/docs.yml/badge.svg)](https://github.com/scpeterson/HaskellDemo/actions/workflows/docs.yml)
+
 This project is a small Haskell companion to `Scott.FunctionalProgrammingTriads`.
 
 The goal is to show how selected C# and LanguageExt examples translate into a purely functional language, starting with small comparisons and growing into richer workflows over time.
@@ -142,6 +145,8 @@ source .venv-docs/bin/activate
 pip install -r requirements-docs.txt
 mkdocs serve
 ```
+
+The repository also includes a GitHub Actions docs workflow that runs `mkdocs build --strict` on docs-related changes.
 
 ## IntelliJ Run Configurations
 
