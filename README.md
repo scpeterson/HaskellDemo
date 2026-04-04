@@ -2,15 +2,10 @@
 
 [![Haskell CI](https://github.com/scpeterson/HaskellDemo/actions/workflows/ci.yml/badge.svg)](https://github.com/scpeterson/HaskellDemo/actions/workflows/ci.yml)
 [![Docs](https://github.com/scpeterson/HaskellDemo/actions/workflows/docs.yml/badge.svg)](https://github.com/scpeterson/HaskellDemo/actions/workflows/docs.yml)
-[![Pages](https://github.com/scpeterson/HaskellDemo/actions/workflows/pages.yml/badge.svg)](https://github.com/scpeterson/HaskellDemo/actions/workflows/pages.yml)
 
 This project is a small Haskell companion to `Scott.FunctionalProgrammingTriads`.
 
 The goal is to show how selected C# and LanguageExt examples translate into a purely functional language, starting with small comparisons and growing into richer workflows over time.
-
-Published docs target:
-
-- [https://scpeterson.github.io/HaskellDemo/](https://scpeterson.github.io/HaskellDemo/)
 
 ## Initial Layout
 
@@ -151,10 +146,9 @@ pip install -r requirements-docs.txt
 mkdocs serve
 ```
 
-The repository also includes:
+The repository includes a docs validation workflow that runs `mkdocs build --strict`.
 
-- a docs validation workflow that runs `mkdocs build --strict`
-- a Pages deployment workflow that publishes the built site from `main`
+GitHub Pages publishing is not enabled right now because the current GitHub plan does not support Pages for this private repository.
 
 ## IntelliJ Run Configurations
 
