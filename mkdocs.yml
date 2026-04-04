@@ -1,0 +1,16 @@
+site_name: HaskellDemo
+site_description: Haskell companion project for Scott.FunctionalProgrammingTriads
+site_url: https://example.invalid/HaskellDemo/
+repo_name: scpeterson/HaskellDemo
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Triads:
+      - End-to-End Registration: triads/end-to-end-registration.md
+  - Architecture:
+      - Comparing With C#: architecture/comparing-with-csharp.md
+markdown_extensions:
+  - toc:
+      permalink: true
+theme:
+  name: readthedocs

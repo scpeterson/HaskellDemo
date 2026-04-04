@@ -4,6 +4,7 @@ import Baseline.AsyncPipeline (runUserPipelineInline)
 import Baseline.AsyncWorkflow (runAsyncWorkflowInline)
 import Baseline.BatchSessionWorkflow (processRegistrationBatchInline)
 import Baseline.EffectsBoundary (saveGreetingInline)
+import Baseline.FeatureRegistration (registerFeatureInline)
 import Baseline.OptionLike (imperativeFindEmail)
 import Baseline.ReaderWorkflow (renderWelcomeExplicit)
 import Baseline.RegistrationWorkflow (registerUserStepByStep)
@@ -17,6 +18,7 @@ import HaskellStyle.AsyncWorkflow (planAsyncWorkflow, runAsyncWorkflow)
 import HaskellStyle.BatchSessionWorkflow (runBatchSessionWorkflow)
 import HaskellStyle.EffectsBoundary (planGreetingWrite, saveGreetingWithBoundary)
 import HaskellStyle.EitherValidation (validateRegistration)
+import HaskellStyle.FeatureRegistration (planFeatureRegistration, runFeatureRegistration)
 import HaskellStyle.MaybePipeline (findEmail)
 import HaskellStyle.ReaderWorkflow (runWelcome)
 import HaskellStyle.RegistrationWorkflow (registerUser)
@@ -30,12 +32,15 @@ import Shared.AsyncPipeline (PipelineRequest (PipelineRequest), PipelineResult (
 import Shared.AsyncWorkflow (AsyncRequest (AsyncRequest), AsyncResult (AsyncResult))
 import Shared.BatchSessionWorkflow (BatchResult (..))
 import Shared.CounterState (CounterCommand (Add, Increment), CounterReport (CounterReport), CounterState (CounterState))
+import Shared.FeatureRegistration (FeatureCommand (..), FeatureEnvironment (FeatureEnvironment), FeatureResult (..), FeatureState (FeatureState))
 import Shared.GreetingStore (FileCommand (WriteGreetingFile))
 import Shared.Person (Person (Person))
 import Shared.Registration (RegistrationInput (RegistrationInput), UserRecord (UserRecord))
 import Shared.SessionWorkflow (SessionEnvironment (SessionEnvironment), SessionState (SessionState))
 import System.Directory (doesFileExist, removeFile)
 import System.Exit (exitFailure, exitSuccess)
+import Control.Monad.Reader (runReaderT)
+import Control.Monad.State.Strict (runState)
 
 samplePeople :: [Person]
 samplePeople =
@@ -81,6 +86,18 @@ baselineBatchAuditPath = "/tmp/haskelldemo-session-batch-baseline-test.txt"
 haskellBatchAuditPath :: FilePath
 haskellBatchAuditPath = "/tmp/haskelldemo-session-batch-haskell-test.txt"
 
+baselineFeatureAuditPath :: FilePath
+baselineFeatureAuditPath = "/tmp/haskelldemo-feature-baseline-audit-test.txt"
+
+baselineFeatureWelcomePath :: FilePath
+baselineFeatureWelcomePath = "/tmp/haskelldemo-feature-baseline-welcome-test.txt"
+
+haskellFeatureAuditPath :: FilePath
+haskellFeatureAuditPath = "/tmp/haskelldemo-feature-haskell-audit-test.txt"
+
+haskellFeatureWelcomePath :: FilePath
+haskellFeatureWelcomePath = "/tmp/haskelldemo-feature-haskell-welcome-test.txt"
+
 asyncRequest :: AsyncRequest
 asyncRequest = AsyncRequest "Alice"
 
@@ -117,6 +134,12 @@ baselineBatchEnvironment = SessionEnvironment "example.com" "Welcome" baselineBa
 haskellBatchEnvironment :: SessionEnvironment
 haskellBatchEnvironment = SessionEnvironment "example.com" "Welcome" haskellBatchAuditPath
 
+baselineFeatureEnvironment :: FeatureEnvironment
+baselineFeatureEnvironment = FeatureEnvironment "example.com" "Welcome" baselineFeatureAuditPath baselineFeatureWelcomePath
+
+haskellFeatureEnvironment :: FeatureEnvironment
+haskellFeatureEnvironment = FeatureEnvironment "example.com" "Welcome" haskellFeatureAuditPath haskellFeatureWelcomePath
+
 initialSessionState :: SessionState
 initialSessionState = SessionState 0 []
 
@@ -140,6 +163,29 @@ expectedBatchResult =
 expectedBatchState :: SessionState
 expectedBatchState =
     SessionState 2 ["processed #1: alice@example.com", "processed #2: evan@example.com"]
+
+initialFeatureState :: FeatureState
+initialFeatureState = FeatureState existingUsers 2
+
+expectedFeatureResult :: FeatureResult
+expectedFeatureResult =
+    FeatureResult
+        { featureRegisteredUser = UserRecord "Alice" "alice@example.com"
+        , featureWelcomeMessage = "Welcome, Alice!"
+        , featureAuditLine = "registered #2: alice@example.com"
+        , featureCommands =
+            [ AppendAuditLine "registered #2: alice@example.com"
+            , AppendWelcomeEmail "Welcome, Alice!"
+            ]
+        }
+
+expectedFeatureState :: FeatureState
+expectedFeatureState =
+    FeatureState
+        [ UserRecord "Existing" "existing@example.com"
+        , UserRecord "Alice" "alice@example.com"
+        ]
+        3
 
 assertEqual :: (Eq a, Show a) => String -> a -> a -> IO ()
 assertEqual label expected actual =
@@ -165,6 +211,10 @@ main = do
         , haskellSessionAuditPath
         , baselineBatchAuditPath
         , haskellBatchAuditPath
+        , baselineFeatureAuditPath
+        , baselineFeatureWelcomePath
+        , haskellFeatureAuditPath
+        , haskellFeatureWelcomePath
         ]
 
     assertEqual "imperative-style lookup returns present email"
@@ -342,5 +392,44 @@ main = do
     assertEqual "haskell batch workflow writes the expected audit trail"
         "processed #1: alice@example.com\nprocessed #2: evan@example.com\n"
         haskellBatchAudit
+
+    let plannedFeature = runState (runReaderT (planFeatureRegistration validRegistration) haskellFeatureEnvironment) initialFeatureState
+    assertEqual "haskell feature planning stays pure before execution"
+        (Right expectedFeatureResult, expectedFeatureState)
+        plannedFeature
+
+    baselineFeature <- registerFeatureInline baselineFeatureEnvironment initialFeatureState validRegistration
+    assertEqual "baseline feature workflow returns the expected result and state"
+        (Right (expectedFeatureResult, expectedFeatureState))
+        baselineFeature
+
+    baselineFeatureAudit <- readFile baselineFeatureAuditPath
+    assertEqual "baseline feature workflow writes the expected audit line"
+        "registered #2: alice@example.com\n"
+        baselineFeatureAudit
+
+    baselineFeatureWelcome <- readFile baselineFeatureWelcomePath
+    assertEqual "baseline feature workflow writes the expected welcome message"
+        "Welcome, Alice!\n"
+        baselineFeatureWelcome
+
+    haskellFeature <- runFeatureRegistration haskellFeatureEnvironment initialFeatureState validRegistration
+    assertEqual "haskell feature workflow returns the expected result and state"
+        (Right expectedFeatureResult, expectedFeatureState)
+        haskellFeature
+
+    haskellFeatureAudit <- readFile haskellFeatureAuditPath
+    assertEqual "haskell feature workflow writes the expected audit line"
+        "registered #2: alice@example.com\n"
+        haskellFeatureAudit
+
+    haskellFeatureWelcome <- readFile haskellFeatureWelcomePath
+    assertEqual "haskell feature workflow writes the expected welcome message"
+        "Welcome, Alice!\n"
+        haskellFeatureWelcome
+
+    assertEqual "haskell feature workflow rejects duplicate email"
+        (Left "Email already exists.", initialFeatureState)
+        =<< runFeatureRegistration haskellFeatureEnvironment initialFeatureState duplicateRegistration
 
     exitSuccess

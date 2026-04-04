@@ -1,41 +1,69 @@
 # Architecture Notes
 
+These notes explain the biggest structural differences between the Haskell project and `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads`.
+
 ## Haskell-Native Composition vs C# Composition Root
 
-This note explains one of the biggest cross-project differences between this Haskell companion project and:
+In the C# repo, composition is often framed around wiring dependencies and making effect boundaries visible.
 
-- `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads`
+In this Haskell project, we still care about the same concerns, but they usually show up as:
 
-## Explicit State Threading vs `State`
+- explicit data flow
+- explicit environment passing
+- pure state transitions
+- a narrow `IO` boundary
 
-Use explicit state threading when the passing itself is part of what we want learners to see.
+That means the architectural concern is the same even though the implementation style looks different.
 
-Use `State` when the state plumbing starts to dominate the code more than the transition logic.
+## Explicit State vs `State`
+
+You can see both styles in this project:
+
+- explicit immutable state threading:
+  - `src/Baseline/StateWorkflow.hs`
+  - `src/HaskellStyle/StateWorkflow.hs`
+- `State` abstraction:
+  - `src/HaskellStyle/StateMonadWorkflow.hs`
+
+The useful teaching pattern is to start with explicit state first, then introduce `State` once the repetition becomes obvious.
 
 ## Explicit Environment vs `Reader`
 
-Use explicit environment passing when there are only a few dependencies and direct parameters still read clearly.
+You can see the same progression with configuration and dependency access:
 
-Use `Reader` when repeating the same environment value through many functions starts to hide the actual business input.
+- explicit environment passing:
+  - `src/Baseline/ReaderWorkflow.hs`
+- `Reader`-based flow:
+  - `src/HaskellStyle/ReaderWorkflow.hs`
+
+This lines up with the composition-root discussion in the C# repo, but it feels lighter because the environment is usually just ordinary data.
 
 ## Combining `Reader`, `State`, and `IO`
 
-The project now has two layers for this story:
+The project now has two layers of examples here:
 
-- single-step combined flow:
-  - `src/Baseline/SessionWorkflow.hs`
+- smaller combined workflow:
   - `src/HaskellStyle/SessionWorkflow.hs`
-- multi-step batch combined flow:
-  - `src/Baseline/BatchSessionWorkflow.hs`
-  - `src/HaskellStyle/BatchSessionWorkflow.hs`
+- deeper feature-level workflow:
+  - `src/HaskellStyle/FeatureRegistration.hs`
 
-That second layer matters because it shows when the abstractions start to pay off more clearly. A single action can often stay direct without much pain. A batch of actions that must keep environment, evolving state, successes, failures, and effects aligned is where the structured Haskell version starts to earn its keep.
+The second one is more important architecturally because it starts to look like a real mini-feature instead of a toy example.
+
+It shows a useful pattern:
+
+1. plan the workflow with `Reader` + `State`
+2. return explicit commands
+3. interpret those commands in `IO`
+
+That is very close in spirit to the C# repo's emphasis on keeping business decisions separate from side effects.
 
 ## Laziness and Streaming
 
-The streaming example is intentionally small, but it highlights a real language-level difference:
+The streaming example highlights a difference that is more language-native than library-native:
 
-- the baseline version works over a finite range explicitly
-- the Haskell version starts from an infinite source and only evaluates the demanded prefix
+- `src/Baseline/StreamingNumbers.hs`
+- `src/HaskellStyle/StreamingNumbers.hs`
 
-That makes laziness a useful teaching topic here because it is not just a library style difference. It changes what has to be modeled explicitly in the first place.
+In C#, lazy or streaming behavior often needs to be highlighted intentionally through enumerables, async streams, or effect types.
+
+In Haskell, laziness is already part of the language model, so the code can stay very small while still demonstrating demand-driven computation.

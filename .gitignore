@@ -3,4 +3,6 @@ dist-newstyle/
 .idea/workspace.xml
 .idea/shelf/
 .idea/
+.venv-docs/
+site/
 !.idea/.gitignore

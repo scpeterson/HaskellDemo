@@ -16,6 +16,8 @@ The goal is to show how selected C# and LanguageExt examples translate into a pu
   Small executable that runs the current comparisons.
 - `test/Spec.hs`
   Lightweight test harness for the current examples.
+- `docs/`
+  Small MkDocs site for onboarding and triad writeups.
 
 ## Implemented Topics
 
@@ -86,7 +88,13 @@ The goal is to show how selected C# and LanguageExt examples translate into a pu
 - `HaskellStyle.BatchSessionWorkflow.processRegistrationBatch`
 - `HaskellStyle.BatchSessionWorkflow.runBatchSessionWorkflow`
 
-This is the newest "larger" example in the project. It processes multiple registrations, keeps accumulated session state, records failures without losing prior successes, and writes an audit trail as it goes.
+### 13. Deeper end-to-end registration triad
+
+- `Baseline.FeatureRegistration.registerFeatureInline`
+- `HaskellStyle.FeatureRegistration.planFeatureRegistration`
+- `HaskellStyle.FeatureRegistration.runFeatureRegistration`
+
+This is the first example in the project that is meant to feel like a full mini-feature rather than a focused language exercise.
 
 ## Working In IntelliJ IDEA
 
@@ -94,7 +102,7 @@ This is the newest "larger" example in the project. It processes multiple regist
 2. Use the built-in terminal for the commands below.
 3. If you experiment with a Haskell plugin, treat it as optional; the project is set up to work with normal terminal-based Cabal commands either way.
 4. Prebuilt shell-based run configs live under `/Users/scottpeterson/Dev/PurelyFunctional/HaskellDemo/.run/`.
-5. This folder is now a Git repository, so the `.run/` files and Haskell sources can be versioned directly here.
+5. This folder is a Git repository, so the `.run/` files and Haskell sources can be versioned directly here.
 
 ## Commands
 
@@ -122,6 +130,19 @@ Open a REPL:
 cabal repl
 ```
 
+## Documentation Site
+
+The project now includes a small MkDocs site.
+
+Set it up with:
+
+```bash
+python3 -m venv .venv-docs
+source .venv-docs/bin/activate
+pip install -r requirements-docs.txt
+mkdocs serve
+```
+
 ## IntelliJ Run Configurations
 
 The project includes these shell-based run configs:
@@ -135,3 +156,4 @@ The project includes these shell-based run configs:
 
 - `ADR-MAPPING.md`
 - `ARCHITECTURE-NOTES.md`
+- `docs/triads/end-to-end-registration.md`

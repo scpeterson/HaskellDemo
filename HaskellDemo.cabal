@@ -11,7 +11,7 @@ author:             Scott Peterson
 maintainer:         s.c.peterson@comcast.net
 category:           Education
 build-type:         Simple
-extra-doc-files:    CHANGELOG.md README.md ADR-MAPPING.md ARCHITECTURE-NOTES.md
+extra-doc-files:    CHANGELOG.md README.md ADR-MAPPING.md ARCHITECTURE-NOTES.md docs/*.md docs/triads/*.md docs/architecture/*.md
 
 common warnings
     ghc-options: -Wall
@@ -30,6 +30,7 @@ library
         Shared.SessionWorkflow,
         Shared.BatchSessionWorkflow,
         Shared.StreamingNumbers,
+        Shared.FeatureRegistration,
         Baseline.OptionLike,
         Baseline.ReaderWorkflow,
         Baseline.ValidationFlow,
@@ -42,6 +43,7 @@ library
         Baseline.SessionWorkflow,
         Baseline.BatchSessionWorkflow,
         Baseline.StreamingNumbers,
+        Baseline.FeatureRegistration,
         HaskellStyle.MaybePipeline,
         HaskellStyle.EitherValidation,
         HaskellStyle.ValidationAccumulation,
@@ -54,7 +56,8 @@ library
         HaskellStyle.StateMonadWorkflow,
         HaskellStyle.SessionWorkflow,
         HaskellStyle.BatchSessionWorkflow,
-        HaskellStyle.StreamingNumbers
+        HaskellStyle.StreamingNumbers,
+        HaskellStyle.FeatureRegistration
     hs-source-dirs:   src
     build-depends:    base ^>=4.18.3.0,
                       mtl ^>=2.3.1
@@ -73,6 +76,7 @@ executable HaskellDemo
         Shared.SessionWorkflow,
         Shared.BatchSessionWorkflow,
         Shared.StreamingNumbers,
+        Shared.FeatureRegistration,
         Baseline.OptionLike,
         Baseline.ReaderWorkflow,
         Baseline.ValidationFlow,
@@ -85,6 +89,7 @@ executable HaskellDemo
         Baseline.SessionWorkflow,
         Baseline.BatchSessionWorkflow,
         Baseline.StreamingNumbers,
+        Baseline.FeatureRegistration,
         HaskellStyle.MaybePipeline,
         HaskellStyle.EitherValidation,
         HaskellStyle.ValidationAccumulation,
@@ -97,7 +102,8 @@ executable HaskellDemo
         HaskellStyle.StateMonadWorkflow,
         HaskellStyle.SessionWorkflow,
         HaskellStyle.BatchSessionWorkflow,
-        HaskellStyle.StreamingNumbers
+        HaskellStyle.StreamingNumbers,
+        HaskellStyle.FeatureRegistration
     hs-source-dirs:   app, src
     build-depends:
         base ^>=4.18.3.0,
@@ -120,6 +126,7 @@ test-suite HaskellDemo-test
         Shared.SessionWorkflow,
         Shared.BatchSessionWorkflow,
         Shared.StreamingNumbers,
+        Shared.FeatureRegistration,
         Baseline.OptionLike,
         Baseline.ReaderWorkflow,
         Baseline.ValidationFlow,
@@ -132,6 +139,7 @@ test-suite HaskellDemo-test
         Baseline.SessionWorkflow,
         Baseline.BatchSessionWorkflow,
         Baseline.StreamingNumbers,
+        Baseline.FeatureRegistration,
         HaskellStyle.MaybePipeline,
         HaskellStyle.EitherValidation,
         HaskellStyle.ValidationAccumulation,
@@ -144,7 +152,8 @@ test-suite HaskellDemo-test
         HaskellStyle.StateMonadWorkflow,
         HaskellStyle.SessionWorkflow,
         HaskellStyle.BatchSessionWorkflow,
-        HaskellStyle.StreamingNumbers
+        HaskellStyle.StreamingNumbers,
+        HaskellStyle.FeatureRegistration
     hs-source-dirs:   test, src
     build-depends:
         base ^>=4.18.3.0,

@@ -128,3 +128,16 @@ Related ADRs:
 - `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0043-end-to-end-registration-triad-comparison.md`
 - `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0008-languageext-eff-aff-effect-boundaries.md`
 - `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0046-composition-root-triad-comparison.md`
+
+### Deeper end-to-end registration triad
+
+- `src/Shared/FeatureRegistration.hs`
+- `src/Baseline/FeatureRegistration.hs`
+- `src/HaskellStyle/FeatureRegistration.hs`
+- `docs/triads/end-to-end-registration.md`
+
+Related ADRs:
+
+- `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0043-end-to-end-registration-triad-comparison.md`
+- `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0008-languageext-eff-aff-effect-boundaries.md`
+- `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0046-composition-root-triad-comparison.md`

@@ -4,6 +4,7 @@ import Baseline.AsyncPipeline (runUserPipelineInline)
 import Baseline.AsyncWorkflow (runAsyncWorkflowInline)
 import Baseline.BatchSessionWorkflow (processRegistrationBatchInline)
 import Baseline.EffectsBoundary (saveGreetingInline)
+import Baseline.FeatureRegistration (registerFeatureInline)
 import Baseline.OptionLike (imperativeFindEmail)
 import Baseline.ReaderWorkflow (renderWelcomeExplicit)
 import Baseline.RegistrationWorkflow (registerUserStepByStep)
@@ -17,6 +18,7 @@ import HaskellStyle.AsyncWorkflow (runAsyncWorkflow)
 import HaskellStyle.BatchSessionWorkflow (runBatchSessionWorkflow)
 import HaskellStyle.EffectsBoundary (saveGreetingWithBoundary)
 import HaskellStyle.EitherValidation (validateRegistration)
+import HaskellStyle.FeatureRegistration (runFeatureRegistration)
 import HaskellStyle.MaybePipeline (findEmail)
 import HaskellStyle.ReaderWorkflow (runWelcome)
 import HaskellStyle.RegistrationWorkflow (registerUser)
@@ -29,9 +31,10 @@ import Shared.AppEnvironment (AppEnvironment (AppEnvironment))
 import Shared.AsyncPipeline (PipelineRequest (PipelineRequest))
 import Shared.AsyncWorkflow (AsyncRequest (AsyncRequest))
 import Shared.CounterState (CounterCommand (Add, Increment))
+import Shared.FeatureRegistration (FeatureEnvironment (FeatureEnvironment), FeatureState (FeatureState))
+import Shared.Person (Person (Person), prettyPerson)
 import Shared.Registration (RegistrationInput (RegistrationInput), UserRecord (UserRecord))
 import Shared.SessionWorkflow (SessionEnvironment (SessionEnvironment), SessionState (SessionState))
-import Shared.Person (Person (Person), prettyPerson)
 
 samplePeople :: [Person]
 samplePeople =
@@ -70,6 +73,12 @@ sessionAuditPath = "/tmp/haskelldemo-session-audit.txt"
 batchSessionAuditPath :: FilePath
 batchSessionAuditPath = "/tmp/haskelldemo-session-batch-audit.txt"
 
+featureAuditPath :: FilePath
+featureAuditPath = "/tmp/haskelldemo-feature-audit.txt"
+
+featureWelcomePath :: FilePath
+featureWelcomePath = "/tmp/haskelldemo-feature-welcome.txt"
+
 asyncRequest :: AsyncRequest
 asyncRequest = AsyncRequest "Dora"
 
@@ -97,6 +106,12 @@ batchRegistrations =
     , RegistrationInput "" "broken@example.com"
     , RegistrationInput "Evan" "evan@example.com"
     ]
+
+featureEnvironment :: FeatureEnvironment
+featureEnvironment = FeatureEnvironment "example.com" "Welcome" featureAuditPath featureWelcomePath
+
+initialFeatureState :: FeatureState
+initialFeatureState = FeatureState existingUsers 3
 
 main :: IO ()
 main = do
@@ -166,3 +181,9 @@ main = do
     haskellBatch <- runBatchSessionWorkflow batchSessionEnvironment initialSessionState batchRegistrations
     putStrLn $ "baseline batch flow:       " ++ show baselineBatch
     putStrLn $ "haskell batch flow:        " ++ show haskellBatch
+    putStrLn ""
+    putStrLn "Comparison 13: deeper end-to-end registration triad"
+    baselineFeature <- registerFeatureInline featureEnvironment initialFeatureState validRegistration
+    haskellFeature <- runFeatureRegistration featureEnvironment initialFeatureState validRegistration
+    putStrLn $ "baseline mini-feature:     " ++ show baselineFeature
+    putStrLn $ "haskell mini-feature:      " ++ show haskellFeature
