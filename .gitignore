@@ -1,0 +1,6 @@
+dist-newstyle/
+.vscode/
+.idea/workspace.xml
+.idea/shelf/
+.idea/
+!.idea/.gitignore

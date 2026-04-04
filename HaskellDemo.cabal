@@ -1,0 +1,154 @@
+cabal-version:      3.0
+name:               HaskellDemo
+version:            0.1.0.0
+synopsis:           Haskell companion project for functional programming triad demos.
+description:
+    A small Haskell project that mirrors selected Scott.FunctionalProgrammingTriads demos
+    so the plain C# and LanguageExt examples can be compared with a purely functional language.
+license:            BSD-3-Clause
+license-file:       LICENSE
+author:             Scott Peterson
+maintainer:         s.c.peterson@comcast.net
+category:           Education
+build-type:         Simple
+extra-doc-files:    CHANGELOG.md README.md ADR-MAPPING.md ARCHITECTURE-NOTES.md
+
+common warnings
+    ghc-options: -Wall
+    default-language: GHC2021
+
+library
+    import:           warnings
+    exposed-modules:
+        Shared.Person,
+        Shared.Registration,
+        Shared.GreetingStore,
+        Shared.AsyncWorkflow,
+        Shared.AsyncPipeline,
+        Shared.CounterState,
+        Shared.AppEnvironment,
+        Shared.SessionWorkflow,
+        Shared.BatchSessionWorkflow,
+        Shared.StreamingNumbers,
+        Baseline.OptionLike,
+        Baseline.ReaderWorkflow,
+        Baseline.ValidationFlow,
+        Baseline.ValidationAccumulation,
+        Baseline.RegistrationWorkflow,
+        Baseline.EffectsBoundary,
+        Baseline.AsyncWorkflow,
+        Baseline.AsyncPipeline,
+        Baseline.StateWorkflow,
+        Baseline.SessionWorkflow,
+        Baseline.BatchSessionWorkflow,
+        Baseline.StreamingNumbers,
+        HaskellStyle.MaybePipeline,
+        HaskellStyle.EitherValidation,
+        HaskellStyle.ValidationAccumulation,
+        HaskellStyle.ReaderWorkflow,
+        HaskellStyle.RegistrationWorkflow,
+        HaskellStyle.EffectsBoundary,
+        HaskellStyle.AsyncWorkflow,
+        HaskellStyle.AsyncPipeline,
+        HaskellStyle.StateWorkflow,
+        HaskellStyle.StateMonadWorkflow,
+        HaskellStyle.SessionWorkflow,
+        HaskellStyle.BatchSessionWorkflow,
+        HaskellStyle.StreamingNumbers
+    hs-source-dirs:   src
+    build-depends:    base ^>=4.18.3.0,
+                      mtl ^>=2.3.1
+
+executable HaskellDemo
+    import:           warnings
+    main-is:          Main.hs
+    other-modules:
+        Shared.Person,
+        Shared.Registration,
+        Shared.GreetingStore,
+        Shared.AsyncWorkflow,
+        Shared.AsyncPipeline,
+        Shared.CounterState,
+        Shared.AppEnvironment,
+        Shared.SessionWorkflow,
+        Shared.BatchSessionWorkflow,
+        Shared.StreamingNumbers,
+        Baseline.OptionLike,
+        Baseline.ReaderWorkflow,
+        Baseline.ValidationFlow,
+        Baseline.ValidationAccumulation,
+        Baseline.RegistrationWorkflow,
+        Baseline.EffectsBoundary,
+        Baseline.AsyncWorkflow,
+        Baseline.AsyncPipeline,
+        Baseline.StateWorkflow,
+        Baseline.SessionWorkflow,
+        Baseline.BatchSessionWorkflow,
+        Baseline.StreamingNumbers,
+        HaskellStyle.MaybePipeline,
+        HaskellStyle.EitherValidation,
+        HaskellStyle.ValidationAccumulation,
+        HaskellStyle.ReaderWorkflow,
+        HaskellStyle.RegistrationWorkflow,
+        HaskellStyle.EffectsBoundary,
+        HaskellStyle.AsyncWorkflow,
+        HaskellStyle.AsyncPipeline,
+        HaskellStyle.StateWorkflow,
+        HaskellStyle.StateMonadWorkflow,
+        HaskellStyle.SessionWorkflow,
+        HaskellStyle.BatchSessionWorkflow,
+        HaskellStyle.StreamingNumbers
+    hs-source-dirs:   app, src
+    build-depends:
+        base ^>=4.18.3.0,
+        mtl ^>=2.3.1,
+        HaskellDemo
+    default-language: GHC2021
+
+test-suite HaskellDemo-test
+    import:           warnings
+    type:             exitcode-stdio-1.0
+    main-is:          Spec.hs
+    other-modules:
+        Shared.Person,
+        Shared.Registration,
+        Shared.GreetingStore,
+        Shared.AsyncWorkflow,
+        Shared.AsyncPipeline,
+        Shared.CounterState,
+        Shared.AppEnvironment,
+        Shared.SessionWorkflow,
+        Shared.BatchSessionWorkflow,
+        Shared.StreamingNumbers,
+        Baseline.OptionLike,
+        Baseline.ReaderWorkflow,
+        Baseline.ValidationFlow,
+        Baseline.ValidationAccumulation,
+        Baseline.RegistrationWorkflow,
+        Baseline.EffectsBoundary,
+        Baseline.AsyncWorkflow,
+        Baseline.AsyncPipeline,
+        Baseline.StateWorkflow,
+        Baseline.SessionWorkflow,
+        Baseline.BatchSessionWorkflow,
+        Baseline.StreamingNumbers,
+        HaskellStyle.MaybePipeline,
+        HaskellStyle.EitherValidation,
+        HaskellStyle.ValidationAccumulation,
+        HaskellStyle.ReaderWorkflow,
+        HaskellStyle.RegistrationWorkflow,
+        HaskellStyle.EffectsBoundary,
+        HaskellStyle.AsyncWorkflow,
+        HaskellStyle.AsyncPipeline,
+        HaskellStyle.StateWorkflow,
+        HaskellStyle.StateMonadWorkflow,
+        HaskellStyle.SessionWorkflow,
+        HaskellStyle.BatchSessionWorkflow,
+        HaskellStyle.StreamingNumbers
+    hs-source-dirs:   test, src
+    build-depends:
+        base ^>=4.18.3.0,
+        mtl ^>=2.3.1,
+        directory ^>=1.3.8.5,
+        HaskellDemo
+    default-language: GHC2021
