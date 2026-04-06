@@ -10,9 +10,11 @@ nav:
   - Contributing: contributing.md
   - Triads:
       - End-to-End Registration: triads/end-to-end-registration.md
+      - Password Reset Feature: triads/password-reset.md
       - Propose A Triad: triads/propose-a-triad.md
   - Architecture:
       - Learning Path: architecture/learning-path.md
+      - Release Checklist: architecture/release-checklist.md
       - Comparing With C#: architecture/comparing-with-csharp.md
 markdown_extensions:
   - toc:

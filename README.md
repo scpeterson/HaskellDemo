@@ -112,6 +112,14 @@ Published docs target:
 
 This is the first example in the project that is meant to feel like a full mini-feature rather than a focused language exercise.
 
+### 14. Password reset feature triad
+
+- `Baseline.FeaturePasswordReset.requestPasswordResetInline`
+- `HaskellStyle.FeaturePasswordReset.planPasswordReset`
+- `HaskellStyle.FeaturePasswordReset.runPasswordReset`
+
+This is the second deep feature-level triad in the project. It complements registration by focusing on recovery-style workflow planning, token generation, and notification effects.
+
 ## Working In IntelliJ IDEA
 
 1. Open `/Users/scottpeterson/Dev/PurelyFunctional/HaskellDemo` in IntelliJ IDEA.
@@ -148,7 +156,7 @@ cabal repl
 
 ## Release Workflow
 
-The repo now includes a manual `Release` workflow that can create a tag like `v0.1.0` and publish a GitHub release from the Actions tab. Update `CHANGELOG.md` first so the release notes have a clean project summary to draw from.
+The repo now includes a manual `Release` workflow that can create a tag like `v0.1.0` and publish a GitHub release from the Actions tab. Update `CHANGELOG.md` first so the release notes have a clean project summary to draw from. See the docs-site release checklist at `docs/architecture/release-checklist.md` before running the workflow.
 
 ## Documentation Site
 

@@ -36,6 +36,7 @@ Those four files give you the clearest view of the deepest triad in the project:
 | HaskellDemo focus | Main counterpart in `Scott.FunctionalProgrammingTriads` | Best starting point |
 | --- | --- | --- |
 | Feature-level workflow | ADR 0043 end-to-end registration triad | [End-to-End Registration](triads/end-to-end-registration.md) |
+| Recovery-style workflow | Feature-level effect-boundary and composition concerns | [Password Reset Feature](triads/password-reset.md) |
 | Composition and environment flow | ADR 0046 composition root triad | [Comparing With C#](architecture/comparing-with-csharp.md) |
 | Effect boundaries | ADR 0008 effect boundaries | [Comparing With C#](architecture/comparing-with-csharp.md) |
 | New contributor workflow | Repo workflow and CI checks | [Contributing](contributing.md) |
@@ -46,4 +47,5 @@ Those four files give you the clearest view of the deepest triad in the project:
 - [Runnable Comparisons](runnable-comparisons.md)
 - [Propose A Triad](triads/propose-a-triad.md)
 - [End-to-End Registration](triads/end-to-end-registration.md)
+- [Password Reset Feature](triads/password-reset.md)
 - [Comparing With C#](architecture/comparing-with-csharp.md)

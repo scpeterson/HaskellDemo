@@ -44,8 +44,9 @@ The project now has two layers of examples here:
 
 - smaller combined workflow:
   - `src/HaskellStyle/SessionWorkflow.hs`
-- deeper feature-level workflow:
+- deeper feature-level workflows:
   - `src/HaskellStyle/FeatureRegistration.hs`
+  - `src/HaskellStyle/FeaturePasswordReset.hs`
 
 The second one is more important architecturally because it starts to look like a real mini-feature instead of a toy example.
 

@@ -141,3 +141,16 @@ Related ADRs:
 - `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0043-end-to-end-registration-triad-comparison.md`
 - `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0008-languageext-eff-aff-effect-boundaries.md`
 - `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0046-composition-root-triad-comparison.md`
+
+### Password reset feature triad
+
+- `src/Shared/FeaturePasswordReset.hs`
+- `src/Baseline/FeaturePasswordReset.hs`
+- `src/HaskellStyle/FeaturePasswordReset.hs`
+- `docs/triads/password-reset.md`
+
+Related ADRs:
+
+- `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0043-end-to-end-registration-triad-comparison.md`
+- `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0008-languageext-eff-aff-effect-boundaries.md`
+- `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0046-composition-root-triad-comparison.md`
