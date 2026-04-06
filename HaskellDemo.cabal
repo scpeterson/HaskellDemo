@@ -30,10 +30,8 @@ library
         Shared.SessionWorkflow,
         Shared.BatchSessionWorkflow,
         Shared.StreamingNumbers,
-        Shared.FeaturePasswordReset,
-        Shared.FeaturePasswordReset,
-        Shared.FeaturePasswordReset,
         Shared.FeatureRegistration,
+        Shared.FeaturePasswordReset,
         Baseline.OptionLike,
         Baseline.ReaderWorkflow,
         Baseline.ValidationFlow,
@@ -46,10 +44,8 @@ library
         Baseline.SessionWorkflow,
         Baseline.BatchSessionWorkflow,
         Baseline.StreamingNumbers,
-        Baseline.FeaturePasswordReset,
-        Baseline.FeaturePasswordReset,
-        Baseline.FeaturePasswordReset,
         Baseline.FeatureRegistration,
+        Baseline.FeaturePasswordReset,
         HaskellStyle.MaybePipeline,
         HaskellStyle.EitherValidation,
         HaskellStyle.ValidationAccumulation,
@@ -63,10 +59,8 @@ library
         HaskellStyle.SessionWorkflow,
         HaskellStyle.BatchSessionWorkflow,
         HaskellStyle.StreamingNumbers,
-        HaskellStyle.FeaturePasswordReset,
-        HaskellStyle.FeaturePasswordReset,
-        HaskellStyle.FeaturePasswordReset,
-        HaskellStyle.FeatureRegistration
+        HaskellStyle.FeatureRegistration,
+        HaskellStyle.FeaturePasswordReset
     hs-source-dirs:   src
     build-depends:    base ^>=4.18.3.0,
                       mtl ^>=2.3.1
@@ -86,6 +80,7 @@ executable HaskellDemo
         Shared.BatchSessionWorkflow,
         Shared.StreamingNumbers,
         Shared.FeatureRegistration,
+        Shared.FeaturePasswordReset,
         Baseline.OptionLike,
         Baseline.ReaderWorkflow,
         Baseline.ValidationFlow,
@@ -99,6 +94,7 @@ executable HaskellDemo
         Baseline.BatchSessionWorkflow,
         Baseline.StreamingNumbers,
         Baseline.FeatureRegistration,
+        Baseline.FeaturePasswordReset,
         HaskellStyle.MaybePipeline,
         HaskellStyle.EitherValidation,
         HaskellStyle.ValidationAccumulation,
@@ -112,7 +108,8 @@ executable HaskellDemo
         HaskellStyle.SessionWorkflow,
         HaskellStyle.BatchSessionWorkflow,
         HaskellStyle.StreamingNumbers,
-        HaskellStyle.FeatureRegistration
+        HaskellStyle.FeatureRegistration,
+        HaskellStyle.FeaturePasswordReset
     hs-source-dirs:   app, src
     build-depends:
         base ^>=4.18.3.0,
@@ -136,6 +133,7 @@ test-suite HaskellDemo-test
         Shared.BatchSessionWorkflow,
         Shared.StreamingNumbers,
         Shared.FeatureRegistration,
+        Shared.FeaturePasswordReset,
         Baseline.OptionLike,
         Baseline.ReaderWorkflow,
         Baseline.ValidationFlow,
@@ -149,6 +147,7 @@ test-suite HaskellDemo-test
         Baseline.BatchSessionWorkflow,
         Baseline.StreamingNumbers,
         Baseline.FeatureRegistration,
+        Baseline.FeaturePasswordReset,
         HaskellStyle.MaybePipeline,
         HaskellStyle.EitherValidation,
         HaskellStyle.ValidationAccumulation,
@@ -162,7 +161,8 @@ test-suite HaskellDemo-test
         HaskellStyle.SessionWorkflow,
         HaskellStyle.BatchSessionWorkflow,
         HaskellStyle.StreamingNumbers,
-        HaskellStyle.FeatureRegistration
+        HaskellStyle.FeatureRegistration,
+        HaskellStyle.FeaturePasswordReset
     hs-source-dirs:   test, src
     build-depends:
         base ^>=4.18.3.0,

@@ -14,11 +14,11 @@ Published site:
 
 - how the current Haskell examples map back to the C# ADRs
 - how the same ideas shift when `Maybe`, `Either`, `Reader`, `State`, and `IO` are native tools
-- one deeper feature-level triad that goes beyond small function examples
+- two deeper feature-level triads that go beyond small function examples
 
 ## Start Here First
 
-If you want the strongest feature-level comparison right away, begin with [End-to-End Registration](triads/end-to-end-registration.md). It is the deepest triad in the project and the best bridge back to the full C# mini-feature material.
+If you want the strongest feature-level comparison right away, begin with [End-to-End Registration](triads/end-to-end-registration.md). Then follow it with [Password Reset Feature](triads/password-reset.md) to see the same architectural ideas in a recovery-style workflow.
 
 ## Best First Code Files To Read
 
@@ -29,7 +29,7 @@ If you want to move from the docs into the code quickly, start with these files:
 - `/Users/scottpeterson/Dev/PurelyFunctional/HaskellDemo/src/HaskellStyle/FeatureRegistration.hs`
 - `/Users/scottpeterson/Dev/PurelyFunctional/HaskellDemo/test/Spec.hs`
 
-Those four files give you the clearest view of the deepest triad in the project: shared domain, baseline implementation, Haskell-style implementation, and test expectations.
+Those four files give you the clearest view of the deepest triad in the project: shared domain, baseline implementation, Haskell-style implementation, and test expectations. After that, the password reset triad is the best second feature to read.
 
 ## Compare With The C# Repo
 

@@ -9,16 +9,20 @@ on:
     branches:
       - main
     paths:
+      - 'app/Main.hs'
       - 'docs/**'
       - 'mkdocs.yml'
-      - 'requirements-docs.txt'
       - 'README.md'
+      - 'requirements-docs.txt'
+      - 'scripts/generate-runnable-comparisons.py'
   pull_request:
     paths:
+      - 'app/Main.hs'
       - 'docs/**'
       - 'mkdocs.yml'
-      - 'requirements-docs.txt'
       - 'README.md'
+      - 'requirements-docs.txt'
+      - 'scripts/generate-runnable-comparisons.py'
 
 jobs:
   build-docs:
@@ -37,6 +41,12 @@ jobs:
 
       - name: Install docs dependencies
         run: pip install -r requirements-docs.txt
+
+      - name: Regenerate runnable comparisons page
+        run: python3 scripts/generate-runnable-comparisons.py
+
+      - name: Verify generated docs are committed
+        run: git diff --exit-code -- docs/runnable-comparisons.md
 
       - name: Build docs
         run: mkdocs build --strict

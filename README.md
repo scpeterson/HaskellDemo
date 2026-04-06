@@ -175,6 +175,7 @@ The repository also includes:
 
 - a docs validation workflow that runs `mkdocs build --strict`
 - a Pages deployment workflow that publishes the built site from `main`
+- a generated `docs/runnable-comparisons.md` page that is checked in CI against `app/Main.hs`
 
 ## Contributing
 
