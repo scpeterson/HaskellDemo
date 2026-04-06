@@ -28,6 +28,8 @@ Published docs target:
   Small MkDocs site for onboarding and triad writeups.
 - `CONTRIBUTING.md`
   Contributor workflow and branch-protection guidance.
+- `docs/contributing.md`
+  Rendered docs-site version of the contributor workflow.
 
 ## Implemented Topics
 

@@ -6,6 +6,7 @@ repo_url: https://github.com/scpeterson/HaskellDemo
 nav:
   - Home: index.md
   - Getting Started: getting-started.md
+  - Contributing: contributing.md
   - Triads:
       - End-to-End Registration: triads/end-to-end-registration.md
   - Architecture:
