@@ -43,5 +43,6 @@ Those four files give you the clearest view of the deepest triad in the project:
 ## Good Starting Points
 
 - [Getting Started](getting-started.md)
+- [Runnable Comparisons](runnable-comparisons.md)
 - [End-to-End Registration](triads/end-to-end-registration.md)
 - [Comparing With C#](architecture/comparing-with-csharp.md)

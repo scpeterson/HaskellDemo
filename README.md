@@ -26,6 +26,8 @@ Published docs target:
   Lightweight test harness for the current examples.
 - `docs/`
   Small MkDocs site for onboarding and triad writeups.
+- `.github/ISSUE_TEMPLATE/`
+  Issue templates for triad ideas and repository improvements.
 - `CONTRIBUTING.md`
   Contributor workflow and branch-protection guidance.
 - `docs/contributing.md`
@@ -141,6 +143,10 @@ Open a REPL:
 ```bash
 cabal repl
 ```
+
+## Release Workflow
+
+The repo now includes a manual `Release` workflow that can create a tag like `v0.1.0` and publish a GitHub release from the Actions tab.
 
 ## Documentation Site
 

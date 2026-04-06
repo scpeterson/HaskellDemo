@@ -1,0 +1,39 @@
+# Runnable Comparisons
+
+This page mirrors the categories printed by `/Users/scottpeterson/Dev/PurelyFunctional/HaskellDemo/app/Main.hs`.
+
+Run the executable with:
+
+```bash
+cabal run HaskellDemo
+```
+
+## Output Categories
+
+1. `Comparison 1: option-style lookup using Maybe`
+2. `Comparison 2: validation using Either`
+3. `Comparison 3: registration workflow`
+4. `Comparison 4: validation accumulation`
+5. `Comparison 5: effects and IO boundaries`
+6. `Comparison 6: async workflow`
+7. `Comparison 7: richer async pipeline`
+8. `Comparison 8: state threading`
+9. `Comparison 9: environment-style dependency passing`
+10. `Comparison 10: Reader + State + IO workflow`
+11. `Comparison 11: laziness and streaming`
+12. `Comparison 12: batch Reader + State + IO workflow`
+13. `Comparison 13: deeper end-to-end registration triad`
+
+## Best Matching Docs Pages
+
+- `Comparison 13`:
+  - [End-to-End Registration](triads/end-to-end-registration.md)
+- architecture overview:
+  - [Comparing With C#](architecture/comparing-with-csharp.md)
+  - [Learning Path](architecture/learning-path.md)
+- contribution flow:
+  - [Contributing](contributing.md)
+
+## Why This Page Exists
+
+The docs site now has a learning path and deeper triad guidance, but this page gives a direct index back to the exact output categories a reader will see when they run the executable. That makes it easier to jump between terminal output, code, and docs without translating names by hand.
