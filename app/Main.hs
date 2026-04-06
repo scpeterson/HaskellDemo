@@ -4,6 +4,7 @@ import Baseline.AsyncPipeline (runUserPipelineInline)
 import Baseline.AsyncWorkflow (runAsyncWorkflowInline)
 import Baseline.BatchSessionWorkflow (processRegistrationBatchInline)
 import Baseline.EffectsBoundary (saveGreetingInline)
+import Baseline.FeatureConfigurationStartup (startApplicationInline)
 import Baseline.FeaturePasswordReset (requestPasswordResetInline)
 import Baseline.FeatureRegistration (registerFeatureInline)
 import Baseline.OptionLike (imperativeFindEmail)
@@ -19,6 +20,7 @@ import HaskellStyle.AsyncWorkflow (runAsyncWorkflow)
 import HaskellStyle.BatchSessionWorkflow (runBatchSessionWorkflow)
 import HaskellStyle.EffectsBoundary (saveGreetingWithBoundary)
 import HaskellStyle.EitherValidation (validateRegistration)
+import HaskellStyle.FeatureConfigurationStartup (runStartup)
 import HaskellStyle.FeaturePasswordReset (runPasswordReset)
 import HaskellStyle.FeatureRegistration (runFeatureRegistration)
 import HaskellStyle.MaybePipeline (findEmail)
@@ -33,6 +35,11 @@ import Shared.AppEnvironment (AppEnvironment (AppEnvironment))
 import Shared.AsyncPipeline (PipelineRequest (PipelineRequest))
 import Shared.AsyncWorkflow (AsyncRequest (AsyncRequest))
 import Shared.CounterState (CounterCommand (Add, Increment))
+import Shared.FeatureConfigurationStartup
+    ( RawStartupConfig (..)
+    , StartupEnvironment (StartupEnvironment)
+    , StartupState (StartupState)
+    )
 import Shared.FeaturePasswordReset (PasswordResetEnvironment (PasswordResetEnvironment), PasswordResetState (PasswordResetState))
 import Shared.FeatureRegistration (FeatureEnvironment (FeatureEnvironment), FeatureState (FeatureState))
 import Shared.Person (Person (Person), prettyPerson)
@@ -88,6 +95,9 @@ passwordResetAuditPath = "/tmp/haskelldemo-password-reset-audit.txt"
 passwordResetEmailPath :: FilePath
 passwordResetEmailPath = "/tmp/haskelldemo-password-reset-email.txt"
 
+startupAuditPath :: FilePath
+startupAuditPath = "/tmp/haskelldemo-startup-audit.txt"
+
 asyncRequest :: AsyncRequest
 asyncRequest = AsyncRequest "Dora"
 
@@ -127,6 +137,22 @@ passwordResetEnvironment = PasswordResetEnvironment "example.com" "https://examp
 
 initialPasswordResetState :: PasswordResetState
 initialPasswordResetState = PasswordResetState existingUsers 5
+
+startupEnvironment :: StartupEnvironment
+startupEnvironment = StartupEnvironment "production" startupAuditPath
+
+initialStartupState :: StartupState
+initialStartupState = StartupState [] 7
+
+validStartupConfig :: RawStartupConfig
+validStartupConfig =
+    RawStartupConfig
+        { rawAppName = "haskelldemo-service"
+        , rawEnvironmentName = "production"
+        , rawDatabaseUrl = "postgres://db.example.com/haskelldemo"
+        , rawPortText = "8080"
+        , rawLogLevel = "info"
+        }
 
 main :: IO ()
 main = do
@@ -208,3 +234,9 @@ main = do
     haskellReset <- runPasswordReset passwordResetEnvironment initialPasswordResetState "alice@example.com"
     putStrLn $ "baseline reset feature:    " ++ show baselineReset
     putStrLn $ "haskell reset feature:     " ++ show haskellReset
+    putStrLn ""
+    putStrLn "Comparison 15: configuration startup feature triad"
+    baselineStartup <- startApplicationInline startupEnvironment initialStartupState validStartupConfig
+    haskellStartup <- runStartup startupEnvironment initialStartupState validStartupConfig
+    putStrLn $ "baseline startup feature:  " ++ show baselineStartup
+    putStrLn $ "haskell startup feature:   " ++ show haskellStartup

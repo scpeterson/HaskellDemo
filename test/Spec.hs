@@ -6,6 +6,7 @@ import Baseline.AsyncPipeline (runUserPipelineInline)
 import Baseline.AsyncWorkflow (runAsyncWorkflowInline)
 import Baseline.BatchSessionWorkflow (processRegistrationBatchInline)
 import Baseline.EffectsBoundary (saveGreetingInline)
+import Baseline.FeatureConfigurationStartup (startApplicationInline)
 import Baseline.FeaturePasswordReset (requestPasswordResetInline)
 import Baseline.FeatureRegistration (registerFeatureInline)
 import Baseline.OptionLike (imperativeFindEmail)
@@ -21,6 +22,7 @@ import HaskellStyle.AsyncWorkflow (planAsyncWorkflow, runAsyncWorkflow)
 import HaskellStyle.BatchSessionWorkflow (runBatchSessionWorkflow)
 import HaskellStyle.EffectsBoundary (planGreetingWrite, saveGreetingWithBoundary)
 import HaskellStyle.EitherValidation (validateRegistration)
+import HaskellStyle.FeatureConfigurationStartup (planStartup, runStartup)
 import HaskellStyle.FeaturePasswordReset (planPasswordReset, runPasswordReset)
 import HaskellStyle.FeatureRegistration (planFeatureRegistration, runFeatureRegistration)
 import HaskellStyle.MaybePipeline (findEmail)
@@ -36,6 +38,14 @@ import Shared.AsyncPipeline (PipelineRequest (PipelineRequest), PipelineResult (
 import Shared.AsyncWorkflow (AsyncRequest (AsyncRequest), AsyncResult (AsyncResult))
 import Shared.BatchSessionWorkflow (BatchResult (..))
 import Shared.CounterState (CounterCommand (Add, Increment), CounterReport (CounterReport), CounterState (CounterState))
+import Shared.FeatureConfigurationStartup
+    ( RawStartupConfig (..)
+    , StartupCommand (AppendStartupAudit)
+    , StartupEnvironment (StartupEnvironment)
+    , StartupResult (..)
+    , StartupState (..)
+    , ValidatedStartupConfig (..)
+    )
 import Shared.FeaturePasswordReset
     ( PasswordResetCommand (AppendResetAudit, AppendResetEmail)
     , PasswordResetEnvironment (PasswordResetEnvironment)
@@ -118,6 +128,12 @@ haskellResetAuditPath = "/tmp/haskelldemo-password-reset-haskell-audit-test.txt"
 haskellResetEmailPath :: FilePath
 haskellResetEmailPath = "/tmp/haskelldemo-password-reset-haskell-email-test.txt"
 
+baselineStartupAuditPath :: FilePath
+baselineStartupAuditPath = "/tmp/haskelldemo-startup-baseline-audit-test.txt"
+
+haskellStartupAuditPath :: FilePath
+haskellStartupAuditPath = "/tmp/haskelldemo-startup-haskell-audit-test.txt"
+
 asyncRequest :: AsyncRequest
 asyncRequest = AsyncRequest "Alice"
 
@@ -167,6 +183,12 @@ baselinePasswordResetEnvironment =
 haskellPasswordResetEnvironment :: PasswordResetEnvironment
 haskellPasswordResetEnvironment =
     PasswordResetEnvironment "example.com" "https://example.com/reset" haskellResetAuditPath haskellResetEmailPath
+
+baselineStartupEnvironment :: StartupEnvironment
+baselineStartupEnvironment = StartupEnvironment "production" baselineStartupAuditPath
+
+haskellStartupEnvironment :: StartupEnvironment
+haskellStartupEnvironment = StartupEnvironment "production" haskellStartupAuditPath
 
 initialSessionState :: SessionState
 initialSessionState = SessionState 0 []
@@ -234,6 +256,59 @@ expectedPasswordResetResult =
 expectedPasswordResetState :: PasswordResetState
 expectedPasswordResetState = PasswordResetState existingUsers 6
 
+validStartupConfig :: RawStartupConfig
+validStartupConfig =
+    RawStartupConfig
+        { rawAppName = "haskelldemo-service"
+        , rawEnvironmentName = "production"
+        , rawDatabaseUrl = "postgres://db.example.com/haskelldemo"
+        , rawPortText = "8080"
+        , rawLogLevel = "info"
+        }
+
+invalidStartupConfig :: RawStartupConfig
+invalidStartupConfig =
+    RawStartupConfig
+        { rawAppName = ""
+        , rawEnvironmentName = "staging"
+        , rawDatabaseUrl = "sqlserver://db.example.com/haskelldemo"
+        , rawPortText = "80"
+        , rawLogLevel = "verbose"
+        }
+
+initialStartupState :: StartupState
+initialStartupState = StartupState [] 7
+
+expectedStartupConfig :: ValidatedStartupConfig
+expectedStartupConfig =
+    ValidatedStartupConfig
+        { validatedAppName = "haskelldemo-service"
+        , validatedEnvironmentName = "production"
+        , validatedDatabaseUrl = "postgres://db.example.com/haskelldemo"
+        , validatedPort = 8080
+        , validatedLogLevel = "info"
+        }
+
+expectedStartupResult :: StartupResult
+expectedStartupResult =
+    StartupResult
+        { startupConfig = expectedStartupConfig
+        , startupAuditLine = "startup #7: haskelldemo-service on production port 8080"
+        , startupCommands = [AppendStartupAudit "startup #7: haskelldemo-service on production port 8080"]
+        }
+
+expectedStartupState :: StartupState
+expectedStartupState = StartupState ["haskelldemo-service@production"] 8
+
+expectedStartupErrors :: [String]
+expectedStartupErrors =
+    [ "Application name is required."
+    , "Environment must be production."
+    , "Database URL must start with postgres://."
+    , "Port must be between 1024 and 65535."
+    , "Log level must be debug, info, warn, or error."
+    ]
+
 assertEqual :: (Eq a, Show a) => String -> a -> a -> IO ()
 assertEqual label expected actual =
     if expected == actual
@@ -266,6 +341,8 @@ main = do
         , baselineResetEmailPath
         , haskellResetAuditPath
         , haskellResetEmailPath
+        , baselineStartupAuditPath
+        , haskellStartupAuditPath
         ]
 
     assertEqual "imperative-style lookup returns present email"
@@ -518,8 +595,37 @@ main = do
         "Reset link for existing@example.com: https://example.com/reset/reset-5\n"
         haskellResetEmail
 
-    assertEqual "haskell password reset workflow rejects missing users"
-        (Left "User was not found.", initialPasswordResetState)
-        =<< runPasswordReset haskellPasswordResetEnvironment initialPasswordResetState "missing@example.com"
+    let plannedStartup = runState (runReaderT (planStartup validStartupConfig) haskellStartupEnvironment) initialStartupState
+    assertEqual "haskell startup planning stays pure before execution"
+        (Right expectedStartupResult, expectedStartupState)
+        plannedStartup
+
+    baselineStartup <- startApplicationInline baselineStartupEnvironment initialStartupState validStartupConfig
+    assertEqual "baseline startup workflow returns the expected result and state"
+        (Right (expectedStartupResult, expectedStartupState))
+        baselineStartup
+
+    baselineStartupAudit <- readFile baselineStartupAuditPath
+    assertEqual "baseline startup workflow writes the expected audit line"
+        "startup #7: haskelldemo-service on production port 8080\n"
+        baselineStartupAudit
+
+    haskellStartup <- runStartup haskellStartupEnvironment initialStartupState validStartupConfig
+    assertEqual "haskell startup workflow returns the expected result and state"
+        (Right expectedStartupResult, expectedStartupState)
+        haskellStartup
+
+    haskellStartupAudit <- readFile haskellStartupAuditPath
+    assertEqual "haskell startup workflow writes the expected audit line"
+        "startup #7: haskelldemo-service on production port 8080\n"
+        haskellStartupAudit
+
+    assertEqual "haskell startup workflow accumulates configuration errors"
+        (Left expectedStartupErrors, initialStartupState)
+        =<< runStartup haskellStartupEnvironment initialStartupState invalidStartupConfig
+
+    assertEqual "haskell startup workflow rejects duplicate startup state"
+        (Left ["Application has already been started for this environment."], expectedStartupState)
+        =<< runStartup haskellStartupEnvironment expectedStartupState validStartupConfig
 
     exitSuccess

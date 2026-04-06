@@ -120,6 +120,14 @@ This is the first example in the project that is meant to feel like a full mini-
 
 This is the second deep feature-level triad in the project. It complements registration by focusing on recovery-style workflow planning, token generation, and notification effects.
 
+### 15. Configuration startup feature triad
+
+- `Baseline.FeatureConfigurationStartup.startApplicationInline`
+- `HaskellStyle.FeatureConfigurationStartup.planStartup`
+- `HaskellStyle.FeatureConfigurationStartup.runStartup`
+
+This is the third deep feature-level triad in the project. It focuses on configuration validation, normalization, duplicate startup protection, and an explicit startup audit boundary.
+
 ## Working In IntelliJ IDEA
 
 1. Open `/Users/scottpeterson/Dev/PurelyFunctional/HaskellDemo` in IntelliJ IDEA.
