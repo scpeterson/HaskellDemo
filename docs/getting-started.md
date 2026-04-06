@@ -43,7 +43,7 @@ The recommended contribution flow is:
 4. if docs changed, run `mkdocs build --strict`
 5. open a pull request and wait for `Haskell CI`
 
-For the fuller repo workflow, see [`CONTRIBUTING.md`](../CONTRIBUTING.md).
+For the fuller repo workflow, see [`Contributing`](contributing.md).
 
 ## Current Focus Areas
 
