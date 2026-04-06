@@ -41,6 +41,7 @@ lines += [
     '- deepest feature workflows:',
     '  - [End-to-End Registration](triads/end-to-end-registration.md)',
     '  - [Password Reset Feature](triads/password-reset.md)',
+    '  - [Configuration Startup Feature](triads/configuration-startup.md)',
     '- architecture overview:',
     '  - [Comparing With C#](architecture/comparing-with-csharp.md)',
     '  - [Learning Path](architecture/learning-path.md)',

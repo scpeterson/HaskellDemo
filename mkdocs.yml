@@ -11,6 +11,7 @@ nav:
   - Triads:
       - End-to-End Registration: triads/end-to-end-registration.md
       - Password Reset Feature: triads/password-reset.md
+      - Configuration Startup Feature: triads/configuration-startup.md
       - Propose A Triad: triads/propose-a-triad.md
   - Architecture:
       - Learning Path: architecture/learning-path.md

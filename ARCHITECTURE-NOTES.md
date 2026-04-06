@@ -47,6 +47,7 @@ The project now has two layers of examples here:
 - deeper feature-level workflows:
   - `src/HaskellStyle/FeatureRegistration.hs`
   - `src/HaskellStyle/FeaturePasswordReset.hs`
+  - `src/HaskellStyle/FeatureConfigurationStartup.hs`
 
 The second one is more important architecturally because it starts to look like a real mini-feature instead of a toy example.
 

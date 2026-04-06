@@ -14,7 +14,7 @@ Published site:
 
 - how the current Haskell examples map back to the C# ADRs
 - how the same ideas shift when `Maybe`, `Either`, `Reader`, `State`, and `IO` are native tools
-- two deeper feature-level triads that go beyond small function examples
+- three deeper feature-level triads that go beyond small function examples
 
 ## Start Here First
 
@@ -48,4 +48,5 @@ Those four files give you the clearest view of the deepest triad in the project:
 - [Propose A Triad](triads/propose-a-triad.md)
 - [End-to-End Registration](triads/end-to-end-registration.md)
 - [Password Reset Feature](triads/password-reset.md)
+- [Configuration Startup Feature](triads/configuration-startup.md)
 - [Comparing With C#](architecture/comparing-with-csharp.md)

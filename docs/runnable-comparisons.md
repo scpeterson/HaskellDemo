@@ -26,12 +26,14 @@ cabal run HaskellDemo
 12. `Comparison 12: batch Reader + State + IO workflow`
 13. `Comparison 13: deeper end-to-end registration triad`
 14. `Comparison 14: password reset feature triad`
+15. `Comparison 15: configuration startup feature triad`
 
 ## Best Matching Docs Pages
 
 - deepest feature workflows:
   - [End-to-End Registration](triads/end-to-end-registration.md)
   - [Password Reset Feature](triads/password-reset.md)
+  - [Configuration Startup Feature](triads/configuration-startup.md)
 - architecture overview:
   - [Comparing With C#](architecture/comparing-with-csharp.md)
   - [Learning Path](architecture/learning-path.md)

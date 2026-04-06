@@ -31,6 +31,7 @@ library
         Shared.BatchSessionWorkflow,
         Shared.StreamingNumbers,
         Shared.FeatureRegistration,
+        Shared.FeatureConfigurationStartup,
         Shared.FeaturePasswordReset,
         Baseline.OptionLike,
         Baseline.ReaderWorkflow,
@@ -45,6 +46,7 @@ library
         Baseline.BatchSessionWorkflow,
         Baseline.StreamingNumbers,
         Baseline.FeatureRegistration,
+        Baseline.FeatureConfigurationStartup,
         Baseline.FeaturePasswordReset,
         HaskellStyle.MaybePipeline,
         HaskellStyle.EitherValidation,
@@ -60,6 +62,7 @@ library
         HaskellStyle.BatchSessionWorkflow,
         HaskellStyle.StreamingNumbers,
         HaskellStyle.FeatureRegistration,
+        HaskellStyle.FeatureConfigurationStartup,
         HaskellStyle.FeaturePasswordReset
     hs-source-dirs:   src
     build-depends:    base ^>=4.18.3.0,
@@ -80,6 +83,7 @@ executable HaskellDemo
         Shared.BatchSessionWorkflow,
         Shared.StreamingNumbers,
         Shared.FeatureRegistration,
+        Shared.FeatureConfigurationStartup,
         Shared.FeaturePasswordReset,
         Baseline.OptionLike,
         Baseline.ReaderWorkflow,
@@ -94,6 +98,7 @@ executable HaskellDemo
         Baseline.BatchSessionWorkflow,
         Baseline.StreamingNumbers,
         Baseline.FeatureRegistration,
+        Baseline.FeatureConfigurationStartup,
         Baseline.FeaturePasswordReset,
         HaskellStyle.MaybePipeline,
         HaskellStyle.EitherValidation,
@@ -109,6 +114,7 @@ executable HaskellDemo
         HaskellStyle.BatchSessionWorkflow,
         HaskellStyle.StreamingNumbers,
         HaskellStyle.FeatureRegistration,
+        HaskellStyle.FeatureConfigurationStartup,
         HaskellStyle.FeaturePasswordReset
     hs-source-dirs:   app, src
     build-depends:
@@ -133,6 +139,7 @@ test-suite HaskellDemo-test
         Shared.BatchSessionWorkflow,
         Shared.StreamingNumbers,
         Shared.FeatureRegistration,
+        Shared.FeatureConfigurationStartup,
         Shared.FeaturePasswordReset,
         Baseline.OptionLike,
         Baseline.ReaderWorkflow,
@@ -147,6 +154,7 @@ test-suite HaskellDemo-test
         Baseline.BatchSessionWorkflow,
         Baseline.StreamingNumbers,
         Baseline.FeatureRegistration,
+        Baseline.FeatureConfigurationStartup,
         Baseline.FeaturePasswordReset,
         HaskellStyle.MaybePipeline,
         HaskellStyle.EitherValidation,
@@ -162,6 +170,7 @@ test-suite HaskellDemo-test
         HaskellStyle.BatchSessionWorkflow,
         HaskellStyle.StreamingNumbers,
         HaskellStyle.FeatureRegistration,
+        HaskellStyle.FeatureConfigurationStartup,
         HaskellStyle.FeaturePasswordReset
     hs-source-dirs:   test, src
     build-depends:

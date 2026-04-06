@@ -154,3 +154,16 @@ Related ADRs:
 - `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0043-end-to-end-registration-triad-comparison.md`
 - `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0008-languageext-eff-aff-effect-boundaries.md`
 - `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0046-composition-root-triad-comparison.md`
+
+### Configuration startup feature triad
+
+- `src/Shared/FeatureConfigurationStartup.hs`
+- `src/Baseline/FeatureConfigurationStartup.hs`
+- `src/HaskellStyle/FeatureConfigurationStartup.hs`
+- `docs/triads/configuration-startup.md`
+
+Related ADRs:
+
+- `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0053-configuration-validation-startup-triad-comparison.md`
+- `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0039-validation-accumulation-triad-comparison.md`
+- `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0046-composition-root-triad-comparison.md`
