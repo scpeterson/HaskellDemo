@@ -32,6 +32,8 @@ Published docs target:
   Contributor workflow and branch-protection guidance.
 - `docs/contributing.md`
   Rendered docs-site version of the contributor workflow.
+- `docs/triads/propose-a-triad.md`
+  Docs-site guidance for proposing new comparisons.
 
 ## Implemented Topics
 
@@ -146,7 +148,7 @@ cabal repl
 
 ## Release Workflow
 
-The repo now includes a manual `Release` workflow that can create a tag like `v0.1.0` and publish a GitHub release from the Actions tab.
+The repo now includes a manual `Release` workflow that can create a tag like `v0.1.0` and publish a GitHub release from the Actions tab. Update `CHANGELOG.md` first so the release notes have a clean project summary to draw from.
 
 ## Documentation Site
 

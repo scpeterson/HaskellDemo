@@ -44,5 +44,6 @@ Those four files give you the clearest view of the deepest triad in the project:
 
 - [Getting Started](getting-started.md)
 - [Runnable Comparisons](runnable-comparisons.md)
+- [Propose A Triad](triads/propose-a-triad.md)
 - [End-to-End Registration](triads/end-to-end-registration.md)
 - [Comparing With C#](architecture/comparing-with-csharp.md)
