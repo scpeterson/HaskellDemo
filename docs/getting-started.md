@@ -33,6 +33,18 @@ pip install -r requirements-docs.txt
 mkdocs serve
 ```
 
+## Pull Request Workflow
+
+The recommended contribution flow is:
+
+1. create a feature branch
+2. make the change locally
+3. run `cabal test`
+4. if docs changed, run `mkdocs build --strict`
+5. open a pull request and wait for `Haskell CI`
+
+For the fuller repo workflow, see [`CONTRIBUTING.md`](../CONTRIBUTING.md).
+
 ## Current Focus Areas
 
 - small expression-level comparisons with `Maybe` and `Either`

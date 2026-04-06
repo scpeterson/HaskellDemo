@@ -26,6 +26,8 @@ Published docs target:
   Lightweight test harness for the current examples.
 - `docs/`
   Small MkDocs site for onboarding and triad writeups.
+- `CONTRIBUTING.md`
+  Contributor workflow and branch-protection guidance.
 
 ## Implemented Topics
 
@@ -158,16 +160,7 @@ The repository also includes:
 
 ## Contributing
 
-`main` is protected and requires the `build-and-test` GitHub Actions check before merges.
-
-A simple working flow is:
-
-1. create a feature branch
-2. make the change locally and run `cabal test`
-3. push the branch and open a pull request
-4. wait for `Haskell CI` to pass before merging
-
-If the change touches docs, the `Docs` and `Pages` workflows will also run from GitHub.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the recommended branch, test, and pull-request workflow.
 
 ## IntelliJ Run Configurations
 
