@@ -10,6 +10,10 @@ It keeps the same teaching intent as the C# and LanguageExt repository, but show
 - how the same ideas shift when `Maybe`, `Either`, `Reader`, `State`, and `IO` are native tools
 - one deeper feature-level triad that goes beyond small function examples
 
+## Start Here First
+
+If you want the strongest feature-level comparison right away, begin with [End-to-End Registration](triads/end-to-end-registration.md). It is the deepest triad in the project and the best bridge back to the full C# mini-feature material.
+
 ## Good Starting Points
 
 - [Getting Started](getting-started.md)

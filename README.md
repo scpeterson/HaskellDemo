@@ -156,6 +156,19 @@ The repository also includes:
 - a docs validation workflow that runs `mkdocs build --strict`
 - a Pages deployment workflow that publishes the built site from `main`
 
+## Contributing
+
+`main` is protected and requires the `build-and-test` GitHub Actions check before merges.
+
+A simple working flow is:
+
+1. create a feature branch
+2. make the change locally and run `cabal test`
+3. push the branch and open a pull request
+4. wait for `Haskell CI` to pass before merging
+
+If the change touches docs, the `Docs` and `Pages` workflows will also run from GitHub.
+
 ## IntelliJ Run Configurations
 
 The project includes these shell-based run configs:
