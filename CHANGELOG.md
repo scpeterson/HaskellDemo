@@ -9,22 +9,25 @@ This changelog follows a simple project convention:
 
 ## Unreleased
 
+No unreleased changes yet.
+
+## v0.1.0 -- 2026-04-06
+
 ### Added
 
-- Release workflow for creating version tags and GitHub releases from Actions.
-- Issue templates for new triad ideas and repository improvements.
-- Runnable comparisons docs page that mirrors the executable output categories.
-- Learning-path, contributing, and proposal guidance in the docs site.
+- Initial Haskell companion project with runnable `Maybe`, `Either`, `Reader`, `State`, `IO`, async, streaming, and validation examples.
+- Deep feature-level triads for end-to-end registration, password reset, and configuration startup.
+- Lightweight test harness covering pure planning, side-effect boundaries, and feature workflows.
+- GitHub Actions workflows for Haskell CI, docs validation, Pages publishing, and manual releases.
+- Contributor guidance, issue templates, PR template, and generated runnable-comparisons docs.
 
 ### Changed
 
-- Docs site navigation now includes runnable comparisons and learning-path guidance.
-- Home page now links readers more directly into the deepest triad and the most important source files.
+- Docs site now includes a learning path, architecture notes, runnable comparisons, and feature-triad pages.
+- Runnable comparisons are generated from `app/Main.hs` and checked in CI for drift.
+- Workflow actions were updated to Node 24-compatible versions and patterns.
 
 ### Docs
 
-- README now documents the release workflow, contributor workflow, issue templates, and published docs.
-
-## 0.1.0.0 -- YYYY-mm-dd
-
-- First version. Released on an unsuspecting world.
+- Published docs site for the Haskell companion project is now live on GitHub Pages.
+- Release checklist, proposal guidance, contributing docs, and cross-repo mapping are now part of the docs surface.
