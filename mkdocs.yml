@@ -10,6 +10,7 @@ nav:
   - Triads:
       - End-to-End Registration: triads/end-to-end-registration.md
   - Architecture:
+      - Learning Path: architecture/learning-path.md
       - Comparing With C#: architecture/comparing-with-csharp.md
 markdown_extensions:
   - toc:
