@@ -6,7 +6,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MAIN = ROOT / 'app' / 'Main.hs'
 OUTPUT = ROOT / 'docs' / 'runnable-comparisons.md'
 
-comparison_pattern = re.compile(r'putStrLn\s+"(Comparison\s+\d+:\s+[^"]+)"')
+comparison_pattern = re.compile(r'(?:putStrLn|printComparisonHeader)\s+"(Comparison\s+\d+:\s+[^"]+)"')
 comparisons = []
 for line in MAIN.read_text().splitlines():
     match = comparison_pattern.search(line)
