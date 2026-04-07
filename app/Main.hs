@@ -34,17 +34,31 @@ import HaskellStyle.ValidationAccumulation (validateRegistrationAllErrors)
 import Shared.AppEnvironment (AppEnvironment (AppEnvironment))
 import Shared.AsyncPipeline (PipelineRequest (PipelineRequest))
 import Shared.AsyncWorkflow (AsyncRequest (AsyncRequest))
+import Shared.BatchSessionWorkflow (BatchResult (..))
 import Shared.CounterState (CounterCommand (Add, Increment))
 import Shared.FeatureConfigurationStartup
     ( RawStartupConfig (..)
+    , StartupCommand (..)
     , StartupEnvironment (StartupEnvironment)
-    , StartupState (StartupState)
+    , StartupResult (..)
+    , StartupState (..)
+    , ValidatedStartupConfig (..)
     )
-import Shared.FeaturePasswordReset (PasswordResetEnvironment (PasswordResetEnvironment), PasswordResetState (PasswordResetState))
-import Shared.FeatureRegistration (FeatureEnvironment (FeatureEnvironment), FeatureState (FeatureState))
+import Shared.FeaturePasswordReset
+    ( PasswordResetCommand (..)
+    , PasswordResetEnvironment (PasswordResetEnvironment)
+    , PasswordResetResult (..)
+    , PasswordResetState (..)
+    )
+import Shared.FeatureRegistration
+    ( FeatureCommand (..)
+    , FeatureEnvironment (FeatureEnvironment)
+    , FeatureResult (..)
+    , FeatureState (..)
+    )
 import Shared.Person (Person (Person), prettyPerson)
 import Shared.Registration (RegistrationInput (RegistrationInput), UserRecord (UserRecord))
-import Shared.SessionWorkflow (SessionEnvironment (SessionEnvironment), SessionState (SessionState))
+import Shared.SessionWorkflow (SessionEnvironment (SessionEnvironment), SessionState (..))
 
 samplePeople :: [Person]
 samplePeople =
@@ -210,8 +224,8 @@ main = do
     putStrLn "Comparison 10: Reader + State + IO workflow"
     baselineSession <- processRegistrationInline sessionEnvironment initialSessionState validRegistration
     haskellSession <- runSessionWorkflow sessionEnvironment initialSessionState validRegistration
-    putStrLn $ "baseline combined flow:    " ++ show baselineSession
-    putStrLn $ "haskell combined flow:     " ++ show haskellSession
+    printBlock "baseline combined flow" (formatInlineSessionResult baselineSession)
+    printBlock "haskell combined flow" (formatStateSessionResult haskellSession)
     putStrLn ""
     putStrLn "Comparison 11: laziness and streaming"
     putStrLn $ "baseline finite range:     " ++ show (firstThreeLargeEvenSquaresFromRange 20)
@@ -220,23 +234,222 @@ main = do
     putStrLn "Comparison 12: batch Reader + State + IO workflow"
     baselineBatch <- processRegistrationBatchInline batchSessionEnvironment initialSessionState batchRegistrations
     haskellBatch <- runBatchSessionWorkflow batchSessionEnvironment initialSessionState batchRegistrations
-    putStrLn $ "baseline batch flow:       " ++ show baselineBatch
-    putStrLn $ "haskell batch flow:        " ++ show haskellBatch
+    printBlock "baseline batch flow" (formatBatchWorkflow baselineBatch)
+    printBlock "haskell batch flow" (formatBatchWorkflow haskellBatch)
     putStrLn ""
     putStrLn "Comparison 13: deeper end-to-end registration triad"
     baselineFeature <- registerFeatureInline featureEnvironment initialFeatureState validRegistration
     haskellFeature <- runFeatureRegistration featureEnvironment initialFeatureState validRegistration
-    putStrLn $ "baseline mini-feature:     " ++ show baselineFeature
-    putStrLn $ "haskell mini-feature:      " ++ show haskellFeature
+    printBlock "baseline mini-feature" (formatInlineFeatureResult baselineFeature)
+    printBlock "haskell mini-feature" (formatStateFeatureResult haskellFeature)
     putStrLn ""
     putStrLn "Comparison 14: password reset feature triad"
     baselineReset <- requestPasswordResetInline passwordResetEnvironment initialPasswordResetState "alice@example.com"
     haskellReset <- runPasswordReset passwordResetEnvironment initialPasswordResetState "alice@example.com"
-    putStrLn $ "baseline reset feature:    " ++ show baselineReset
-    putStrLn $ "haskell reset feature:     " ++ show haskellReset
+    printBlock "baseline reset feature" (formatInlinePasswordResetResult baselineReset)
+    printBlock "haskell reset feature" (formatStatePasswordResetResult haskellReset)
     putStrLn ""
     putStrLn "Comparison 15: configuration startup feature triad"
     baselineStartup <- startApplicationInline startupEnvironment initialStartupState validStartupConfig
     haskellStartup <- runStartup startupEnvironment initialStartupState validStartupConfig
-    putStrLn $ "baseline startup feature:  " ++ show baselineStartup
-    putStrLn $ "haskell startup feature:   " ++ show haskellStartup
+    printBlock "baseline startup feature" (formatInlineStartupResult baselineStartup)
+    printBlock "haskell startup feature" (formatStateStartupResult haskellStartup)
+
+printBlock :: String -> [String] -> IO ()
+printBlock label linesToPrint = do
+    putStrLn $ label ++ ":"
+    mapM_ (putStrLn . ("  " ++)) linesToPrint
+
+formatInlineSessionResult :: Either String (SessionState, String) -> [String]
+formatInlineSessionResult (Left err) = ["status: error", "reason: " ++ err]
+formatInlineSessionResult (Right (state, message)) =
+    [ "status: success"
+    , "message: " ++ message
+    ] ++ formatSessionStateBlock state
+
+formatStateSessionResult :: (Either String String, SessionState) -> [String]
+formatStateSessionResult (result, state) =
+    case result of
+        Left err ->
+            [ "status: error"
+            , "reason: " ++ err
+            ] ++ formatSessionStateBlock state
+        Right message ->
+            [ "status: success"
+            , "message: " ++ message
+            ] ++ formatSessionStateBlock state
+
+formatBatchWorkflow :: (BatchResult, SessionState) -> [String]
+formatBatchWorkflow (batchResult, state) =
+    [ "successful registrations:"
+    ] ++ indent (formatSuccessfulRegistrations (successfulRegistrations batchResult))
+        ++ [ "failed registrations:" ]
+        ++ indent (formatFailedRegistrations (failedRegistrations batchResult))
+        ++ formatSessionStateBlock state
+
+formatInlineFeatureResult :: Either String (FeatureResult, FeatureState) -> [String]
+formatInlineFeatureResult (Left err) = ["status: error", "reason: " ++ err]
+formatInlineFeatureResult (Right (result, state)) =
+    ["status: success"]
+        ++ formatFeatureResultBlock result
+        ++ formatFeatureStateBlock state
+
+formatStateFeatureResult :: (Either String FeatureResult, FeatureState) -> [String]
+formatStateFeatureResult (result, state) =
+    case result of
+        Left err -> ["status: error", "reason: " ++ err] ++ formatFeatureStateBlock state
+        Right success -> ["status: success"] ++ formatFeatureResultBlock success ++ formatFeatureStateBlock state
+
+formatInlinePasswordResetResult :: Either String (PasswordResetResult, PasswordResetState) -> [String]
+formatInlinePasswordResetResult (Left err) = ["status: error", "reason: " ++ err]
+formatInlinePasswordResetResult (Right (result, state)) =
+    ["status: success"]
+        ++ formatPasswordResetResultBlock result
+        ++ formatPasswordResetStateBlock state
+
+formatStatePasswordResetResult :: (Either String PasswordResetResult, PasswordResetState) -> [String]
+formatStatePasswordResetResult (result, state) =
+    case result of
+        Left err -> ["status: error", "reason: " ++ err] ++ formatPasswordResetStateBlock state
+        Right success -> ["status: success"] ++ formatPasswordResetResultBlock success ++ formatPasswordResetStateBlock state
+
+formatInlineStartupResult :: Either [String] (StartupResult, StartupState) -> [String]
+formatInlineStartupResult (Left errs) = ["status: error", "reasons:"] ++ indent (formatStringList errs)
+formatInlineStartupResult (Right (result, state)) =
+    ["status: success"]
+        ++ formatStartupResultBlock result
+        ++ formatStartupStateBlock state
+
+formatStateStartupResult :: (Either [String] StartupResult, StartupState) -> [String]
+formatStateStartupResult (result, state) =
+    case result of
+        Left errs -> ["status: error", "reasons:"] ++ indent (formatStringList errs) ++ formatStartupStateBlock state
+        Right success -> ["status: success"] ++ formatStartupResultBlock success ++ formatStartupStateBlock state
+
+formatSessionStateBlock :: SessionState -> [String]
+formatSessionStateBlock state =
+    [ "state:"
+    ] ++ indent
+        [ "processed count: " ++ show (sessionProcessedCount state)
+        , "audit trail:"
+        ]
+        ++ indent (indent (formatStringList (sessionAuditTrail state)))
+
+formatFeatureResultBlock :: FeatureResult -> [String]
+formatFeatureResultBlock result =
+    [ "result:"
+    ] ++ indent
+        [ "registered user: " ++ formatUserRecord (featureRegisteredUser result)
+        , "welcome message: " ++ featureWelcomeMessage result
+        , "audit line: " ++ featureAuditLine result
+        , "commands:"
+        ]
+        ++ indent (indent (formatFeatureCommands (featureCommands result)))
+
+formatFeatureStateBlock :: FeatureState -> [String]
+formatFeatureStateBlock state =
+    [ "state:"
+    ] ++ indent
+        [ "registered users:"
+        ]
+        ++ indent (indent (map formatUserRecord (featureRegisteredUsers state)))
+        ++ indent ["next audit number: " ++ show (featureNextAuditNumber state)]
+
+formatPasswordResetResultBlock :: PasswordResetResult -> [String]
+formatPasswordResetResultBlock result =
+    [ "result:"
+    ] ++ indent
+        [ "user email: " ++ resetUserEmail result
+        , "token: " ++ resetToken result
+        , "reset link: " ++ resetLink result
+        , "audit line: " ++ resetAuditLine result
+        , "commands:"
+        ]
+        ++ indent (indent (formatPasswordResetCommands (resetCommands result)))
+
+formatPasswordResetStateBlock :: PasswordResetState -> [String]
+formatPasswordResetStateBlock state =
+    [ "state:"
+    ] ++ indent
+        [ "known users:"
+        ]
+        ++ indent (indent (map formatUserRecord (resetKnownUsers state)))
+        ++ indent ["next token number: " ++ show (resetNextTokenNumber state)]
+
+formatStartupResultBlock :: StartupResult -> [String]
+formatStartupResultBlock result =
+    [ "result:"
+    ] ++ indent
+        [ "validated config:"
+        ]
+        ++ indent (indent (formatValidatedStartupConfig (startupConfig result)))
+        ++ indent
+            [ "audit line: " ++ startupAuditLine result
+            , "commands:"
+            ]
+        ++ indent (indent (formatStartupCommands (startupCommands result)))
+
+formatStartupStateBlock :: StartupState -> [String]
+formatStartupStateBlock state =
+    [ "state:"
+    ] ++ indent
+        [ "started applications:"
+        ]
+        ++ indent (indent (formatStringList (startedApplications state)))
+        ++ indent ["next audit number: " ++ show (startupNextAuditNumber state)]
+
+formatValidatedStartupConfig :: ValidatedStartupConfig -> [String]
+formatValidatedStartupConfig config =
+    [ "app name: " ++ validatedAppName config
+    , "environment: " ++ validatedEnvironmentName config
+    , "database url: " ++ validatedDatabaseUrl config
+    , "port: " ++ show (validatedPort config)
+    , "log level: " ++ validatedLogLevel config
+    ]
+
+formatFeatureCommands :: [FeatureCommand] -> [String]
+formatFeatureCommands [] = ["(none)"]
+formatFeatureCommands commands = map formatFeatureCommand commands
+
+formatFeatureCommand :: FeatureCommand -> String
+formatFeatureCommand (AppendAuditLine line) = "AppendAuditLine: " ++ line
+formatFeatureCommand (AppendWelcomeEmail message) = "AppendWelcomeEmail: " ++ message
+
+formatPasswordResetCommands :: [PasswordResetCommand] -> [String]
+formatPasswordResetCommands [] = ["(none)"]
+formatPasswordResetCommands commands = map formatPasswordResetCommand commands
+
+formatPasswordResetCommand :: PasswordResetCommand -> String
+formatPasswordResetCommand (AppendResetAudit line) = "AppendResetAudit: " ++ line
+formatPasswordResetCommand (AppendResetEmail body) = "AppendResetEmail: " ++ body
+
+formatStartupCommands :: [StartupCommand] -> [String]
+formatStartupCommands [] = ["(none)"]
+formatStartupCommands commands = map formatStartupCommand commands
+
+formatStartupCommand :: StartupCommand -> String
+formatStartupCommand (AppendStartupAudit line) = "AppendStartupAudit: " ++ line
+
+formatSuccessfulRegistrations :: [String] -> [String]
+formatSuccessfulRegistrations [] = ["(none)"]
+formatSuccessfulRegistrations values = values
+
+formatFailedRegistrations :: [(RegistrationInput, String)] -> [String]
+formatFailedRegistrations [] = ["(none)"]
+formatFailedRegistrations failures = map formatFailedRegistration failures
+
+formatFailedRegistration :: (RegistrationInput, String) -> String
+formatFailedRegistration (RegistrationInput name email, reason) =
+    displayName ++ " <" ++ email ++ "> -> " ++ reason
+  where
+    displayName = if null name then "(blank name)" else name
+
+formatStringList :: [String] -> [String]
+formatStringList [] = ["(none)"]
+formatStringList values = values
+
+formatUserRecord :: UserRecord -> String
+formatUserRecord (UserRecord name email) = name ++ " <" ++ email ++ ">"
+
+indent :: [String] -> [String]
+indent = map ("  " ++)
