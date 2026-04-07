@@ -172,88 +172,85 @@ main :: IO ()
 main = do
     putStrLn "HaskellDemo"
     putStrLn "==========="
-    putStrLn "Comparison 1: option-style lookup using Maybe"
-    putStrLn ""
+    printComparisonHeader "Comparison 1: option-style lookup using Maybe"
+
     mapM_ (putStrLn . prettyPerson) samplePeople
     putStrLn ""
     putStrLn $ "imperative-style Bob lookup: " ++ show (imperativeFindEmail "Bob" samplePeople)
     putStrLn $ "haskell-style Alice lookup:  " ++ show (findEmail "Alice" samplePeople)
     putStrLn $ "haskell-style Dana lookup:   " ++ show (findEmail "Dana" samplePeople)
-    putStrLn ""
-    putStrLn "Comparison 2: validation using Either"
+    printComparisonHeader "Comparison 2: validation using Either"
     putStrLn $ "baseline valid registration:  " ++ show (validateRegistrationStepByStep validRegistration)
     putStrLn $ "haskell valid registration:   " ++ show (validateRegistration validRegistration)
     putStrLn $ "haskell invalid registration: " ++ show (validateRegistration invalidRegistration)
-    putStrLn ""
-    putStrLn "Comparison 3: registration workflow"
+    printComparisonHeader "Comparison 3: registration workflow"
     putStrLn $ "baseline new user registration: " ++ show (registerUserStepByStep existingUsers validRegistration)
     putStrLn $ "haskell new user registration:  " ++ show (registerUser existingUsers validRegistration)
     putStrLn $ "haskell duplicate rejection:    " ++ show (registerUser existingUsers duplicateRegistration)
-    putStrLn ""
-    putStrLn "Comparison 4: validation accumulation"
+    printComparisonHeader "Comparison 4: validation accumulation"
     putStrLn $ "baseline first error:       " ++ show (validateRegistrationFirstError badAccumulationInput)
     putStrLn $ "haskell accumulated errors: " ++ show (validateRegistrationAllErrors badAccumulationInput)
-    putStrLn ""
-    putStrLn "Comparison 5: effects and IO boundaries"
+    printComparisonHeader "Comparison 5: effects and IO boundaries"
     inlineResult <- saveGreetingInline inlineGreetingPath "Dora"
     boundaryResult <- saveGreetingWithBoundary boundaryGreetingPath "Dora"
     putStrLn $ "baseline inline IO:       " ++ show inlineResult
     putStrLn $ "haskell IO boundary flow: " ++ show boundaryResult
-    putStrLn ""
-    putStrLn "Comparison 6: async workflow"
+    printComparisonHeader "Comparison 6: async workflow"
     baselineAsync <- runAsyncWorkflowInline asyncRequest
     haskellAsync <- runAsyncWorkflow asyncRequest
     putStrLn $ "baseline async flow:       " ++ show baselineAsync
     putStrLn $ "haskell async composition: " ++ show haskellAsync
-    putStrLn ""
-    putStrLn "Comparison 7: richer async pipeline"
+    printComparisonHeader "Comparison 7: richer async pipeline"
     baselinePipeline <- runUserPipelineInline pipelineRequest
     haskellPipeline <- runUserPipeline pipelineRequest
     putStrLn $ "baseline pipeline:         " ++ show baselinePipeline
     putStrLn $ "haskell pipeline:          " ++ show haskellPipeline
-    putStrLn ""
-    putStrLn "Comparison 8: state threading"
+    printComparisonHeader "Comparison 8: state threading"
     putStrLn $ "baseline state program:    " ++ show (runCounterProgramStepByStep counterCommands)
     putStrLn $ "haskell state program:     " ++ show (applyProgram counterCommands)
     putStrLn $ "state monad program:       " ++ show (applyProgramWithState counterCommands)
-    putStrLn ""
-    putStrLn "Comparison 9: environment-style dependency passing"
+    printComparisonHeader "Comparison 9: environment-style dependency passing"
     putStrLn $ "baseline explicit env:     " ++ show (renderWelcomeExplicit appEnvironment validRegistration)
     putStrLn $ "haskell reader workflow:   " ++ show (runWelcome appEnvironment validRegistration)
-    putStrLn ""
-    putStrLn "Comparison 10: Reader + State + IO workflow"
+    printComparisonHeader "Comparison 10: Reader + State + IO workflow"
     baselineSession <- processRegistrationInline sessionEnvironment initialSessionState validRegistration
     haskellSession <- runSessionWorkflow sessionEnvironment initialSessionState validRegistration
     printBlock "baseline combined flow" (formatInlineSessionResult baselineSession)
     printBlock "haskell combined flow" (formatStateSessionResult haskellSession)
-    putStrLn ""
-    putStrLn "Comparison 11: laziness and streaming"
+    printComparisonHeader "Comparison 11: laziness and streaming"
     putStrLn $ "baseline finite range:     " ++ show (firstThreeLargeEvenSquaresFromRange 20)
     putStrLn $ "haskell lazy stream:       " ++ show firstThreeLargeEvenSquares
-    putStrLn ""
-    putStrLn "Comparison 12: batch Reader + State + IO workflow"
+    printComparisonHeader "Comparison 12: batch Reader + State + IO workflow"
     baselineBatch <- processRegistrationBatchInline batchSessionEnvironment initialSessionState batchRegistrations
     haskellBatch <- runBatchSessionWorkflow batchSessionEnvironment initialSessionState batchRegistrations
     printBlock "baseline batch flow" (formatBatchWorkflow baselineBatch)
     printBlock "haskell batch flow" (formatBatchWorkflow haskellBatch)
-    putStrLn ""
-    putStrLn "Comparison 13: deeper end-to-end registration triad"
+    printComparisonHeader "Comparison 13: deeper end-to-end registration triad"
     baselineFeature <- registerFeatureInline featureEnvironment initialFeatureState validRegistration
     haskellFeature <- runFeatureRegistration featureEnvironment initialFeatureState validRegistration
     printBlock "baseline mini-feature" (formatInlineFeatureResult baselineFeature)
     printBlock "haskell mini-feature" (formatStateFeatureResult haskellFeature)
-    putStrLn ""
-    putStrLn "Comparison 14: password reset feature triad"
+    printComparisonHeader "Comparison 14: password reset feature triad"
     baselineReset <- requestPasswordResetInline passwordResetEnvironment initialPasswordResetState "alice@example.com"
     haskellReset <- runPasswordReset passwordResetEnvironment initialPasswordResetState "alice@example.com"
     printBlock "baseline reset feature" (formatInlinePasswordResetResult baselineReset)
     printBlock "haskell reset feature" (formatStatePasswordResetResult haskellReset)
-    putStrLn ""
-    putStrLn "Comparison 15: configuration startup feature triad"
+    printComparisonHeader "Comparison 15: configuration startup feature triad"
     baselineStartup <- startApplicationInline startupEnvironment initialStartupState validStartupConfig
     haskellStartup <- runStartup startupEnvironment initialStartupState validStartupConfig
     printBlock "baseline startup feature" (formatInlineStartupResult baselineStartup)
     printBlock "haskell startup feature" (formatStateStartupResult haskellStartup)
+
+printComparisonHeader :: String -> IO ()
+printComparisonHeader title = do
+    putStrLn ""
+    putStrLn comparisonDivider
+    putStrLn title
+    putStrLn comparisonDivider
+    putStrLn ""
+
+comparisonDivider :: String
+comparisonDivider = replicate 58 '='
 
 printBlock :: String -> [String] -> IO ()
 printBlock label linesToPrint = do
