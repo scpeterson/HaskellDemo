@@ -32,10 +32,10 @@ import HaskellStyle.StateWorkflow (applyProgram)
 import HaskellStyle.StreamingNumbers (firstThreeLargeEvenSquares)
 import HaskellStyle.ValidationAccumulation (validateRegistrationAllErrors)
 import Shared.AppEnvironment (AppEnvironment (AppEnvironment))
-import Shared.AsyncPipeline (PipelineRequest (PipelineRequest))
-import Shared.AsyncWorkflow (AsyncRequest (AsyncRequest))
+import Shared.AsyncPipeline (PipelineRequest (PipelineRequest), PipelineResult (..))
+import Shared.AsyncWorkflow (AsyncRequest (AsyncRequest), AsyncResult (..))
 import Shared.BatchSessionWorkflow (BatchResult (..))
-import Shared.CounterState (CounterCommand (Add, Increment))
+import Shared.CounterState (CounterCommand (Add, Increment), CounterReport (..), CounterState (..))
 import Shared.FeatureConfigurationStartup
     ( RawStartupConfig (..)
     , StartupCommand (..)
@@ -180,13 +180,13 @@ main = do
     putStrLn $ "haskell-style Alice lookup:  " ++ show (findEmail "Alice" samplePeople)
     putStrLn $ "haskell-style Dana lookup:   " ++ show (findEmail "Dana" samplePeople)
     printComparisonHeader "Comparison 2: validation using Either"
-    putStrLn $ "baseline valid registration:  " ++ show (validateRegistrationStepByStep validRegistration)
-    putStrLn $ "haskell valid registration:   " ++ show (validateRegistration validRegistration)
-    putStrLn $ "haskell invalid registration: " ++ show (validateRegistration invalidRegistration)
+    printBlock "baseline valid registration" (formatUserValidationResult (validateRegistrationStepByStep validRegistration))
+    printBlock "haskell valid registration" (formatUserValidationResult (validateRegistration validRegistration))
+    printBlock "haskell invalid registration" (formatUserValidationResult (validateRegistration invalidRegistration))
     printComparisonHeader "Comparison 3: registration workflow"
-    putStrLn $ "baseline new user registration: " ++ show (registerUserStepByStep existingUsers validRegistration)
-    putStrLn $ "haskell new user registration:  " ++ show (registerUser existingUsers validRegistration)
-    putStrLn $ "haskell duplicate rejection:    " ++ show (registerUser existingUsers duplicateRegistration)
+    printBlock "baseline new user registration" (formatRegistrationWorkflowResult (registerUserStepByStep existingUsers validRegistration))
+    printBlock "haskell new user registration" (formatRegistrationWorkflowResult (registerUser existingUsers validRegistration))
+    printBlock "haskell duplicate rejection" (formatRegistrationWorkflowResult (registerUser existingUsers duplicateRegistration))
     printComparisonHeader "Comparison 4: validation accumulation"
     putStrLn $ "baseline first error:       " ++ show (validateRegistrationFirstError badAccumulationInput)
     putStrLn $ "haskell accumulated errors: " ++ show (validateRegistrationAllErrors badAccumulationInput)
@@ -198,17 +198,17 @@ main = do
     printComparisonHeader "Comparison 6: async workflow"
     baselineAsync <- runAsyncWorkflowInline asyncRequest
     haskellAsync <- runAsyncWorkflow asyncRequest
-    putStrLn $ "baseline async flow:       " ++ show baselineAsync
-    putStrLn $ "haskell async composition: " ++ show haskellAsync
+    printBlock "baseline async flow" (formatAsyncResult baselineAsync)
+    printBlock "haskell async composition" (formatAsyncResult haskellAsync)
     printComparisonHeader "Comparison 7: richer async pipeline"
     baselinePipeline <- runUserPipelineInline pipelineRequest
     haskellPipeline <- runUserPipeline pipelineRequest
-    putStrLn $ "baseline pipeline:         " ++ show baselinePipeline
-    putStrLn $ "haskell pipeline:          " ++ show haskellPipeline
+    printBlock "baseline pipeline" (formatPipelineResult baselinePipeline)
+    printBlock "haskell pipeline" (formatPipelineResult haskellPipeline)
     printComparisonHeader "Comparison 8: state threading"
-    putStrLn $ "baseline state program:    " ++ show (runCounterProgramStepByStep counterCommands)
-    putStrLn $ "haskell state program:     " ++ show (applyProgram counterCommands)
-    putStrLn $ "state monad program:       " ++ show (applyProgramWithState counterCommands)
+    printBlock "baseline state program" (formatCounterReport (runCounterProgramStepByStep counterCommands))
+    printBlock "haskell state program" (formatCounterReport (applyProgram counterCommands))
+    printBlock "state monad program" (formatCounterReport (applyProgramWithState counterCommands))
     printComparisonHeader "Comparison 9: environment-style dependency passing"
     putStrLn $ "baseline explicit env:     " ++ show (renderWelcomeExplicit appEnvironment validRegistration)
     putStrLn $ "haskell reader workflow:   " ++ show (runWelcome appEnvironment validRegistration)
@@ -256,6 +256,32 @@ printBlock :: String -> [String] -> IO ()
 printBlock label linesToPrint = do
     putStrLn $ label ++ ":"
     mapM_ (putStrLn . ("  " ++)) linesToPrint
+
+formatUserValidationResult :: Either String UserRecord -> [String]
+formatUserValidationResult (Left err) = ["status: error", "reason: " ++ err]
+formatUserValidationResult (Right user) = ["status: success", "user: " ++ formatUserRecord user]
+
+formatRegistrationWorkflowResult :: Either String ([UserRecord], String) -> [String]
+formatRegistrationWorkflowResult (Left err) = ["status: error", "reason: " ++ err]
+formatRegistrationWorkflowResult (Right (users, message)) =
+    [ "status: success"
+    , "message: " ++ message
+    , "registered users:"
+    ] ++ indent (map formatUserRecord users)
+
+formatAsyncResult :: Either String AsyncResult -> [String]
+formatAsyncResult (Left err) = ["status: error", "reason: " ++ err]
+formatAsyncResult (Right result) = ["status: success", "message: " ++ asyncMessage result]
+
+formatPipelineResult :: Either String PipelineResult -> [String]
+formatPipelineResult (Left err) = ["status: error", "reason: " ++ err]
+formatPipelineResult (Right result) = ["status: success", "summary: " ++ pipelineSummary result]
+
+formatCounterReport :: CounterReport -> [String]
+formatCounterReport report =
+    [ "final value: " ++ show (counterValue (finalState report))
+    , "applied steps:"
+    ] ++ indent (formatStringList (appliedSteps report))
 
 formatInlineSessionResult :: Either String (SessionState, String) -> [String]
 formatInlineSessionResult (Left err) = ["status: error", "reason: " ++ err]
