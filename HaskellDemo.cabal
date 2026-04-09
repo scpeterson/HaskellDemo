@@ -72,6 +72,9 @@ executable HaskellDemo
     import:           warnings
     main-is:          Main.hs
     other-modules:
+        App.SampleData,
+        App.TerminalOutput,
+        App.ComparisonRunner,
         Shared.Person,
         Shared.Registration,
         Shared.GreetingStore,
