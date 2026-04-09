@@ -17,7 +17,7 @@ nav:
   - Architecture:
       - Learning Path: architecture/learning-path.md
       - Release Checklist: architecture/release-checklist.md
-      - Comparing With C#: architecture/comparing-with-csharp.md
+      - "Comparing With C#": architecture/comparing-with-csharp.md
 markdown_extensions:
   - toc:
       permalink: true
