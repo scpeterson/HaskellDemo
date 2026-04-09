@@ -17,6 +17,7 @@ import App.TerminalOutput
     , formatStatePasswordResetResult
     , formatStateSessionResult
     , formatStateStartupResult
+    , formatRetryOutcome
     , formatUserValidationResult
     , printBlock
     , printComparisonHeader
@@ -24,6 +25,7 @@ import App.TerminalOutput
 import Baseline.AsyncPipeline (runUserPipelineInline)
 import Baseline.AsyncWorkflow (runAsyncWorkflowInline)
 import Baseline.BatchSessionWorkflow (processRegistrationBatchInline)
+import Baseline.RetryBackoff (runRetryBackoffInline)
 import Baseline.EffectsBoundary (saveGreetingInline)
 import Baseline.FeatureConfigurationStartup (startApplicationInline)
 import Baseline.FeaturePasswordReset (requestPasswordResetInline)
@@ -39,6 +41,7 @@ import Baseline.ValidationFlow (validateRegistrationStepByStep)
 import HaskellStyle.AsyncPipeline (runUserPipeline)
 import HaskellStyle.AsyncWorkflow (runAsyncWorkflow)
 import HaskellStyle.BatchSessionWorkflow (runBatchSessionWorkflow)
+import HaskellStyle.RetryBackoff (runRetryBackoff)
 import HaskellStyle.EffectsBoundary (saveGreetingWithBoundary)
 import HaskellStyle.EitherValidation (validateRegistration)
 import HaskellStyle.FeatureConfigurationStartup (runStartup)
@@ -140,3 +143,9 @@ runAllComparisons = do
     haskellStartup <- runStartup startupEnvironment initialStartupState validStartupConfig
     printBlock "baseline startup feature" (formatInlineStartupResult baselineStartup)
     printBlock "haskell startup feature" (formatStateStartupResult haskellStartup)
+
+    printComparisonHeader "Comparison 16: retry and backoff policy triad"
+    baselineRetry <- runRetryBackoffInline retrySuccessRequest
+    haskellRetry <- runRetryBackoff retrySuccessRequest
+    printBlock "baseline retry flow" (formatRetryOutcome baselineRetry)
+    printBlock "haskell retry flow" (formatRetryOutcome haskellRetry)

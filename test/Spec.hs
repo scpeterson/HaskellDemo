@@ -5,6 +5,7 @@ import Control.Monad.State.Strict (runState)
 import Baseline.AsyncPipeline (runUserPipelineInline)
 import Baseline.AsyncWorkflow (runAsyncWorkflowInline)
 import Baseline.BatchSessionWorkflow (processRegistrationBatchInline)
+import Baseline.RetryBackoff (runRetryBackoffInline)
 import Baseline.EffectsBoundary (saveGreetingInline)
 import Baseline.FeatureConfigurationStartup (startApplicationInline)
 import Baseline.FeaturePasswordReset (requestPasswordResetInline)
@@ -20,6 +21,7 @@ import Baseline.ValidationFlow (validateRegistrationStepByStep)
 import HaskellStyle.AsyncPipeline (PipelinePlan (PipelinePlan), planUserPipeline, runUserPipeline)
 import HaskellStyle.AsyncWorkflow (planAsyncWorkflow, runAsyncWorkflow)
 import HaskellStyle.BatchSessionWorkflow (runBatchSessionWorkflow)
+import HaskellStyle.RetryBackoff (decideRetry, planRetryStep, runRetryBackoff)
 import HaskellStyle.EffectsBoundary (planGreetingWrite, saveGreetingWithBoundary)
 import HaskellStyle.EitherValidation (validateRegistration)
 import HaskellStyle.FeatureConfigurationStartup (planStartup, runStartup)
@@ -56,6 +58,15 @@ import Shared.FeatureRegistration (FeatureCommand (..), FeatureEnvironment (Feat
 import Shared.GreetingStore (FileCommand (WriteGreetingFile))
 import Shared.Person (Person (Person))
 import Shared.Registration (RegistrationInput (RegistrationInput), UserRecord (UserRecord))
+import Shared.RetryBackoff
+    ( OperationError (TemporaryFailure)
+    , RetryDecision (RetryAfter, StopRetrying)
+    , RetryOutcome (..)
+    , RetryRequest (RetryRequest)
+    , RetryState (..)
+    , RetryStep (RetryPlanned)
+    , initialRetryState
+    )
 import Shared.SessionWorkflow (SessionEnvironment (SessionEnvironment), SessionState (SessionState))
 import System.Directory (doesFileExist, removeFile)
 import System.Exit (exitFailure, exitSuccess)
@@ -308,6 +319,55 @@ expectedStartupErrors =
     , "Port must be between 1024 and 65535."
     , "Log level must be debug, info, warn, or error."
     ]
+
+retrySuccessRequest :: RetryRequest
+retrySuccessRequest = RetryRequest "User-42"
+
+retryBusyRequest :: RetryRequest
+retryBusyRequest = RetryRequest "always-busy"
+
+retryBlockedRequest :: RetryRequest
+retryBlockedRequest = RetryRequest "bad-user"
+
+expectedFirstRetryState :: RetryState
+expectedFirstRetryState = RetryState 2 [200] ["temporary: profile service unavailable"]
+
+expectedRetrySuccessOutcome :: RetryOutcome
+expectedRetrySuccessOutcome =
+    RetryOutcome
+        { retryStatus = "success"
+        , retryMessage = "Loaded profile for User-42"
+        , retryAttemptsUsed = 3
+        , retryDelayHistoryUsed = [200, 400]
+        , retryFailureLogUsed =
+            [ "temporary: profile service unavailable"
+            , "temporary: profile service unavailable"
+            ]
+        }
+
+expectedRetryBusyOutcome :: RetryOutcome
+expectedRetryBusyOutcome =
+    RetryOutcome
+        { retryStatus = "failure"
+        , retryMessage = "temporary: profile service unavailable"
+        , retryAttemptsUsed = 3
+        , retryDelayHistoryUsed = [200, 400]
+        , retryFailureLogUsed =
+            [ "temporary: profile service unavailable"
+            , "temporary: profile service unavailable"
+            , "temporary: profile service unavailable"
+            ]
+        }
+
+expectedRetryBlockedOutcome :: RetryOutcome
+expectedRetryBlockedOutcome =
+    RetryOutcome
+        { retryStatus = "failure"
+        , retryMessage = "permanent: user is blocked for retries"
+        , retryAttemptsUsed = 1
+        , retryDelayHistoryUsed = []
+        , retryFailureLogUsed = ["permanent: user is blocked for retries"]
+        }
 
 assertEqual :: (Eq a, Show a) => String -> a -> a -> IO ()
 assertEqual label expected actual =
@@ -627,5 +687,48 @@ main = do
     assertEqual "haskell startup workflow rejects duplicate startup state"
         (Left ["Application has already been started for this environment."], expectedStartupState)
         =<< runStartup haskellStartupEnvironment expectedStartupState validStartupConfig
+
+
+    assertEqual "retry policy retries a temporary failure on the first attempt"
+        (RetryAfter 200)
+        (decideRetry 1 (TemporaryFailure "profile service unavailable"))
+
+    assertEqual "retry policy stops after the third temporary failure"
+        StopRetrying
+        (decideRetry 3 (TemporaryFailure "profile service unavailable"))
+
+    assertEqual "retry planner records the first failure and delay"
+        (RetryPlanned 200, expectedFirstRetryState)
+        (runState (planRetryStep retrySuccessRequest) initialRetryState)
+
+    baselineRetrySuccess <- runRetryBackoffInline retrySuccessRequest
+    assertEqual "baseline retry workflow succeeds after retries"
+        expectedRetrySuccessOutcome
+        baselineRetrySuccess
+
+    haskellRetrySuccess <- runRetryBackoff retrySuccessRequest
+    assertEqual "haskell retry workflow succeeds after retries"
+        expectedRetrySuccessOutcome
+        haskellRetrySuccess
+
+    baselineRetryBusy <- runRetryBackoffInline retryBusyRequest
+    assertEqual "baseline retry workflow stops after max temporary failures"
+        expectedRetryBusyOutcome
+        baselineRetryBusy
+
+    haskellRetryBusy <- runRetryBackoff retryBusyRequest
+    assertEqual "haskell retry workflow stops after max temporary failures"
+        expectedRetryBusyOutcome
+        haskellRetryBusy
+
+    baselineRetryBlocked <- runRetryBackoffInline retryBlockedRequest
+    assertEqual "baseline retry workflow stops on permanent failure"
+        expectedRetryBlockedOutcome
+        baselineRetryBlocked
+
+    haskellRetryBlocked <- runRetryBackoff retryBlockedRequest
+    assertEqual "haskell retry workflow stops on permanent failure"
+        expectedRetryBlockedOutcome
+        haskellRetryBlocked
 
     exitSuccess

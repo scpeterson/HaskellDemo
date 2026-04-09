@@ -15,6 +15,7 @@ module App.TerminalOutput
     , formatStatePasswordResetResult
     , formatInlineStartupResult
     , formatStateStartupResult
+    , formatRetryOutcome
     ) where
 
 import Shared.AsyncPipeline (PipelineResult (..))
@@ -38,6 +39,7 @@ import Shared.FeatureRegistration
     , FeatureState (..)
     )
 import Shared.Registration (RegistrationInput (RegistrationInput), UserRecord (UserRecord))
+import Shared.RetryBackoff (RetryOutcome (..))
 import Shared.SessionWorkflow (SessionState (..))
 
 printComparisonHeader :: String -> IO ()
@@ -147,6 +149,20 @@ formatStateStartupResult (result, state) =
     case result of
         Left errs -> ["status: error", "reasons:"] ++ indent (formatStringList errs) ++ formatStartupStateBlock state
         Right success -> ["status: success"] ++ formatStartupResultBlock success ++ formatStartupStateBlock state
+
+formatRetryOutcome :: RetryOutcome -> [String]
+formatRetryOutcome outcome =
+    [ "status: " ++ retryStatus outcome
+    , "message: " ++ retryMessage outcome
+    , "attempts used: " ++ show (retryAttemptsUsed outcome)
+    , "delay history:"
+    ] ++ indent (formatDelayHistory (retryDelayHistoryUsed outcome))
+        ++ [ "failure log:" ]
+        ++ indent (formatStringList (retryFailureLogUsed outcome))
+
+formatDelayHistory :: [Int] -> [String]
+formatDelayHistory [] = ["(none)"]
+formatDelayHistory values = map (<> "ms") (map show values)
 
 formatSessionStateBlock :: SessionState -> [String]
 formatSessionStateBlock state =
