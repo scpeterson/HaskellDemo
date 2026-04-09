@@ -167,3 +167,16 @@ Related ADRs:
 - `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0053-configuration-validation-startup-triad-comparison.md`
 - `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0039-validation-accumulation-triad-comparison.md`
 - `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0046-composition-root-triad-comparison.md`
+
+### Retry and backoff policy triad
+
+- `src/Shared/RetryBackoff.hs`
+- `src/Baseline/RetryBackoff.hs`
+- `src/HaskellStyle/RetryBackoff.hs`
+- `docs/triads/retry-backoff.md`
+
+Related ADRs:
+
+- `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0042-async-eff-workflow-triad-comparison.md`
+- `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0008-languageext-eff-aff-effect-boundaries.md`
+- `/Users/scottpeterson/Dev/FunctionalProgrammingTriads/Scott.FunctionalProgrammingTriads/docs/architecture/adr/0046-composition-root-triad-comparison.md`

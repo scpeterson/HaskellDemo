@@ -14,11 +14,11 @@ Published site:
 
 - how the current Haskell examples map back to the C# ADRs
 - how the same ideas shift when `Maybe`, `Either`, `Reader`, `State`, and `IO` are native tools
-- three deeper feature-level triads that go beyond small function examples
+- four deeper feature-level triads that go beyond small function examples
 
 ## Start Here First
 
-If you want the strongest feature-level comparison right away, begin with [End-to-End Registration](triads/end-to-end-registration.md). Then follow it with [Password Reset Feature](triads/password-reset.md) to see the same architectural ideas in a recovery-style workflow.
+If you want the strongest feature-level comparison right away, begin with [End-to-End Registration](triads/end-to-end-registration.md). Then follow it with [Password Reset Feature](triads/password-reset.md) to see the same architectural ideas in a recovery-style workflow. After that, [Retry And Backoff Policy](triads/retry-backoff.md) is a good next stop for resilience-oriented orchestration.
 
 ## Best First Code Files To Read
 
@@ -49,4 +49,5 @@ Those four files give you the clearest view of the deepest triad in the project:
 - [End-to-End Registration](triads/end-to-end-registration.md)
 - [Password Reset Feature](triads/password-reset.md)
 - [Configuration Startup Feature](triads/configuration-startup.md)
+- [Retry And Backoff Policy](triads/retry-backoff.md)
 - [Comparing With C#](architecture/comparing-with-csharp.md)

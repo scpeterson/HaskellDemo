@@ -27,6 +27,7 @@ cabal run HaskellDemo
 13. `Comparison 13: deeper end-to-end registration triad`
 14. `Comparison 14: password reset feature triad`
 15. `Comparison 15: configuration startup feature triad`
+16. `Comparison 16: retry and backoff policy triad`
 
 ## Best Matching Docs Pages
 

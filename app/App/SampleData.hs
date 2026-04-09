@@ -29,6 +29,9 @@ module App.SampleData
     , startupEnvironment
     , initialStartupState
     , validStartupConfig
+    , retrySuccessRequest
+    , retryBusyRequest
+    , retryBlockedRequest
     ) where
 
 import Shared.AppEnvironment (AppEnvironment (AppEnvironment))
@@ -44,6 +47,7 @@ import Shared.FeaturePasswordReset (PasswordResetEnvironment (PasswordResetEnvir
 import Shared.FeatureRegistration (FeatureEnvironment (FeatureEnvironment), FeatureState (FeatureState))
 import Shared.Person (Person (Person))
 import Shared.Registration (RegistrationInput (RegistrationInput), UserRecord (UserRecord))
+import Shared.RetryBackoff (RetryRequest (RetryRequest))
 import Shared.SessionWorkflow (SessionEnvironment (SessionEnvironment), SessionState (SessionState))
 
 samplePeople :: [Person]
@@ -153,3 +157,12 @@ validStartupConfig =
         , rawPortText = "8080"
         , rawLogLevel = "info"
         }
+
+retrySuccessRequest :: RetryRequest
+retrySuccessRequest = RetryRequest "User-42"
+
+retryBusyRequest :: RetryRequest
+retryBusyRequest = RetryRequest "always-busy"
+
+retryBlockedRequest :: RetryRequest
+retryBlockedRequest = RetryRequest "bad-user"

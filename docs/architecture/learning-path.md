@@ -35,7 +35,8 @@ Once the end-to-end triad makes sense, a good follow-up route is:
 2. state examples
 3. `Reader` examples
 4. combined `Reader` + `State` + `IO` workflows
-5. streaming/laziness examples
+5. retry/backoff policy triad
+6. streaming/laziness examples
 
 ## Live Docs
 

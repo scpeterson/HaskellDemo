@@ -128,6 +128,15 @@ This is the second deep feature-level triad in the project. It complements regis
 
 This is the third deep feature-level triad in the project. It focuses on configuration validation, normalization, duplicate startup protection, and an explicit startup audit boundary.
 
+### 16. Retry and backoff policy triad
+
+- `Baseline.RetryBackoff.runRetryBackoffInline`
+- `HaskellStyle.RetryBackoff.decideRetry`
+- `HaskellStyle.RetryBackoff.planRetryStep`
+- `HaskellStyle.RetryBackoff.runRetryBackoff`
+
+This is the fourth deep feature-level triad in the project. It focuses on retry policy, explicit attempt state, backoff history, and keeping execution timing at the edge.
+
 ## Working In IntelliJ IDEA
 
 1. Open `/Users/scottpeterson/Dev/PurelyFunctional/HaskellDemo` in IntelliJ IDEA.
@@ -183,7 +192,7 @@ The repository also includes:
 
 - a docs validation workflow that runs `mkdocs build --strict`
 - a Pages deployment workflow that publishes the built site from `main`
-- a generated `docs/runnable-comparisons.md` page that is checked in CI against `app/Main.hs`
+- a generated `docs/runnable-comparisons.md` page that is checked in CI against `app/App/ComparisonRunner.hs`
 
 ## Contributing
 
