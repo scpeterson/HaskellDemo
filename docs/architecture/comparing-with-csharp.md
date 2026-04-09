@@ -1,4 +1,4 @@
-# Comparing With C#
+# Comparing With C\#
 
 The goal of this project is not to claim that Haskell is simply "C# but more functional."
 
